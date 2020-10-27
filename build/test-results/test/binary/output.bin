@@ -1,0 +1,4 @@
+%3,4:Prietenie{user1='3', user2='4'}
+%2,3:Prietenie{user1='2', user2='3'}
+%2,4:Prietenie{user1='2', user2='4'}
+%1,4:Prietenie{user1='1', user2='4'}

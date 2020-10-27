@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+//sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+run{
+    standardInput(System.in)
+}
+application{
+
+    mainClassName='socialnetwork.Main'
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+//pentru junit 5
+test{
+    useJUnitPlatform{
+        //ruleaza doar testele cu tagul t si le exclude pe cele cu s
+        includeTags 't'
+        excludeTags 's'
+    }
+}
