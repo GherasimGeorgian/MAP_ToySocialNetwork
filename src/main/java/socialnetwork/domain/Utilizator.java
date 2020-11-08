@@ -68,11 +68,11 @@ public class Utilizator extends Entity<Long> {
         Utilizator that = (Utilizator) o;
         return getFirstName().equals(that.getFirstName()) &&
                 getLastName().equals(that.getLastName()) &&
-                getFriends().equals(that.getFriends());
+                getId().equals(that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFirstName(), getLastName(), getFriends());
+        return Objects.hash(getId(),getFirstName(), getLastName());
     }
 }

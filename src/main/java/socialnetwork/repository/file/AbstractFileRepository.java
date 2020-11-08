@@ -78,7 +78,12 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
         return e;
 
     }
-
+    @Override
+    public Iterable<E> changeEntities(Map<ID,E> entities){
+        super.changeEntities(entities);
+        writeToFileAll(entities);
+        return this.entities.values();
+    }
     protected void writeToFile(E entity){
         try (BufferedWriter bW = new BufferedWriter(new FileWriter(fileName,true))) {
             bW.write(createEntityAsString(entity));
@@ -99,8 +104,6 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
 
 
         for (Map.Entry<ID, E> entry : entities.entrySet()) {
-            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-
             writeToFile(entry.getValue());
         }
 

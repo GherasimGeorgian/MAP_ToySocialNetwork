@@ -6,17 +6,17 @@ import socialnetwork.domain.Prietenie;
 import socialnetwork.domain.Tuple;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.repository.Repository;
-import socialnetwork.repository.repo_validators.RepositoryException;
+import socialnetwork.repository.RepositoryOptional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class UtilizatorService {
-    private Repository<Long, Utilizator> repoUser;
+public class UserServiceDB {
+    private RepositoryOptional<Long,Utilizator> userDataBase;
     private Repository<Tuple<Long,Long>, Prietenie> repoPrietenie;
 
-    public UtilizatorService(Repository<Long, Utilizator> repoUsr,Repository<Tuple<Long,Long>, Prietenie> repoPtr) {
-        this.repoUser = repoUsr;
+    public UserServiceDB(RepositoryOptional<Long,Utilizator> userDataBase,Repository<Tuple<Long,Long>, Prietenie> repoPtr) {
+        this.userDataBase = userDataBase;
         this.repoPrietenie = repoPtr;
         connectPrietenii();
     }
@@ -31,8 +31,8 @@ public class UtilizatorService {
             throw new Exception("Userul pe care doresti sa-l introduci exista deja!");
         }
         else{
-            Utilizator task = repoUser.save(utilizator_nou );
-            return task;
+            userDataBase.save(utilizator_nou);
+            return utilizator_nou;
         }
     }
     public Long createId(){
@@ -42,7 +42,7 @@ public class UtilizatorService {
             if(id< 0){
                 id *= -1;
             }
-            for(Utilizator u : repoUser.findAll()){
+            for(Utilizator u : userDataBase.findAll()){
                 if(id == u.getId()){
                     ok =false;
                     break;
@@ -61,10 +61,16 @@ public class UtilizatorService {
         return null;
     }
     public Iterable<Utilizator> getAllUsers(){
-        return repoUser.findAll();
+        return userDataBase.findAll();
     }
     public Utilizator stergeUtilizator(String firstName, String lastName) throws Exception{
 
+        if(firstName.isEmpty()){
+            throw new Exception("FirstName is empty!");
+        }
+        if(lastName.isEmpty()){
+            throw new Exception("LastName is empty!");
+        }
         Utilizator gasit = this.findByNumePrenume(firstName, lastName);
         if(gasit == null){
             throw new Exception("Nu exista userul cu numele"+ firstName +"!");
@@ -72,17 +78,17 @@ public class UtilizatorService {
         else{
             Map<Tuple<Long,Long>, Prietenie> map = new HashMap<>();
             for(Prietenie p : repoPrietenie.findAll()) {
-                if(!(p.getId().getLeft() == gasit.getId() || p.getId().getRight() == gasit.getId())) {
+                if(!(p.getId().getLeft().toString().equals(gasit.getId().toString()) || p.getId().getRight().toString().equals(gasit.getId().toString()))) {
                     map.put(p.getId(), p);
                 }
             }
             repoPrietenie.changeEntities(map);
             this.connectPrietenii();
-            return repoUser.delete(gasit.getId());
+            return userDataBase.delete(gasit.getId()).get();
         }
     }
     public void stergePrieteniiUser(Utilizator utilizator,Prietenie p) {
-          //  if(p.getId().getLeft() == utilizator.getId() || p.getId().getRight() == utilizator.getId()) {
+        //  if(p.getId().getLeft() == utilizator.getId() || p.getId().getRight() == utilizator.getId()) {
 
 
 //                if(p.getId().getLeft().toString().equals(utilizator.getId())){
@@ -91,19 +97,19 @@ public class UtilizatorService {
 //                    Prietenie ptr = repoPrietenie.delete(new Tuple<>(utilizator.getId(),p.getId().getRight()));
 //
 //                }
-          //      if(true){
+        //      if(true){
 
-                    System.out.println("User dreapta" + p);
-                    try {
-                        Prietenie ptr = repoPrietenie.delete(new Tuple<>(p.getId().getLeft(), p.getId().getRight()));
+        System.out.println("User dreapta" + p);
+        try {
+            Prietenie ptr = repoPrietenie.delete(new Tuple<>(p.getId().getLeft(), p.getId().getRight()));
 
-                    }
-                    catch(Exception ex){
+        }
+        catch(Exception ex){
 
-                    }
-            //    }
+        }
+        //    }
 
-           //  }
+        //  }
     }
 
 
@@ -121,7 +127,7 @@ public class UtilizatorService {
 
 
     public Utilizator findOneUser(long id){
-        return repoUser.findOne(id);
+        return userDataBase.findOne(id).get();
     }
 
     public Iterable<Prietenie> getAllFriends(){
@@ -161,10 +167,10 @@ public class UtilizatorService {
 
 
     public Integer numarComunitati(){
-        Graph g = new Graph(((Collection<?>)repoUser.findAll()).size());
-        Map<Long,ElementGraph> entities = new HashMap<>();
+        Graph g = new Graph(((Collection<?>)userDataBase.findAll()).size());
+        Map<Long, ElementGraph> entities = new HashMap<>();
         int i=0;
-        for(Utilizator u: repoUser.findAll()){
+        for(Utilizator u: userDataBase.findAll()){
             ElementGraph elem = new ElementGraph(u);
             elem.setIdGraph(i);
             entities.put(u.getId(),elem);
@@ -189,10 +195,10 @@ public class UtilizatorService {
 
 
     public ArrayList<ArrayList<String>> comunitateSociabila() {
-        Graph g = new Graph(((Collection<?>)repoUser.findAll()).size());
+        Graph g = new Graph(((Collection<?>)userDataBase.findAll()).size());
         Map<Long,ElementGraph> entities = new HashMap<>();
         int i=0;
-        for(Utilizator u: repoUser.findAll()){
+        for(Utilizator u: userDataBase.findAll()){
             ElementGraph elem = new ElementGraph(u);
             elem.setIdGraph(i);
             entities.put(u.getId(),elem);

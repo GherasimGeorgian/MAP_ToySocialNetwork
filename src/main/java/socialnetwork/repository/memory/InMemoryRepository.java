@@ -30,6 +30,13 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
     }
 
     @Override
+    public Iterable<E> changeEntities(Map<ID,E> entities){
+        this.entities = entities;
+        return this.entities.values();
+    }
+
+
+    @Override
     public E save(E entity) {
 
         if (entity==null)

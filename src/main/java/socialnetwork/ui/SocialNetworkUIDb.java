@@ -1,17 +1,19 @@
 package socialnetwork.ui;
 
+
 import socialnetwork.domain.validators.ValidationException;
 import socialnetwork.repository.repo_validators.RepositoryException;
+import socialnetwork.service.UserServiceDB;
 import socialnetwork.service.UtilizatorService;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class SocialNetworkUI {
-    private UtilizatorService userService;
+public class SocialNetworkUIDb {
+    private UserServiceDB userService;
 
 
-    public void setService(UtilizatorService service) {
+    public void setService(UserServiceDB service) {
         this.userService = service;
     }
 
@@ -104,7 +106,7 @@ public class SocialNetworkUI {
             System.out.println("Error: " + er.getMessage());
         }
         catch(Exception e){
-            System.out.println("Eroare la introducerea datelor!");
+            System.out.println("Eroare la introducerea datelor!" + e.getMessage());
         }
     }
     private void stergeUtilizator(){

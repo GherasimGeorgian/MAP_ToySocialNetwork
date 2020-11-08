@@ -1,22 +1,28 @@
 package socialnetwork.service;
 
-import socialnetwork.Algorithm.ElementGraph;
-import socialnetwork.Algorithm.Graph;
-import socialnetwork.domain.Prietenie;
-import socialnetwork.domain.Tuple;
-import socialnetwork.domain.Utilizator;
-import socialnetwork.repository.Repository;
-import socialnetwork.repository.repo_validators.RepositoryException;
+        import jdk.jshell.execution.Util;
+        import socialnetwork.Algorithm.ElementGraph;
+        import socialnetwork.Algorithm.Graph;
+        import socialnetwork.domain.Prietenie;
+        import socialnetwork.domain.PrietenieDTO;
+        import socialnetwork.domain.Tuple;
+        import socialnetwork.domain.Utilizator;
+        import socialnetwork.repository.Repository;
+        import socialnetwork.repository.RepositoryOptional;
 
-import java.time.LocalDateTime;
-import java.util.*;
+        import java.time.LocalDateTime;
+        import java.util.*;
+        import java.util.function.Predicate;
+        import java.util.stream.Collector;
+        import java.util.stream.Collectors;
+        import java.util.stream.StreamSupport;
 
-public class UtilizatorService {
-    private Repository<Long, Utilizator> repoUser;
-    private Repository<Tuple<Long,Long>, Prietenie> repoPrietenie;
+public class UserServiceFullDB {
+    private RepositoryOptional<Long, Utilizator> userDataBase;
+    private RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPrietenie;
 
-    public UtilizatorService(Repository<Long, Utilizator> repoUsr,Repository<Tuple<Long,Long>, Prietenie> repoPtr) {
-        this.repoUser = repoUsr;
+    public UserServiceFullDB(RepositoryOptional<Long,Utilizator> userDataBase,RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPtr) {
+        this.userDataBase = userDataBase;
         this.repoPrietenie = repoPtr;
         connectPrietenii();
     }
@@ -31,8 +37,8 @@ public class UtilizatorService {
             throw new Exception("Userul pe care doresti sa-l introduci exista deja!");
         }
         else{
-            Utilizator task = repoUser.save(utilizator_nou );
-            return task;
+            userDataBase.save(utilizator_nou);
+            return utilizator_nou;
         }
     }
     public Long createId(){
@@ -42,7 +48,7 @@ public class UtilizatorService {
             if(id< 0){
                 id *= -1;
             }
-            for(Utilizator u : repoUser.findAll()){
+            for(Utilizator u : userDataBase.findAll()){
                 if(id == u.getId()){
                     ok =false;
                     break;
@@ -61,10 +67,16 @@ public class UtilizatorService {
         return null;
     }
     public Iterable<Utilizator> getAllUsers(){
-        return repoUser.findAll();
+        return userDataBase.findAll();
     }
     public Utilizator stergeUtilizator(String firstName, String lastName) throws Exception{
 
+        if(firstName.isEmpty()){
+            throw new Exception("FirstName is empty!");
+        }
+        if(lastName.isEmpty()){
+            throw new Exception("LastName is empty!");
+        }
         Utilizator gasit = this.findByNumePrenume(firstName, lastName);
         if(gasit == null){
             throw new Exception("Nu exista userul cu numele"+ firstName +"!");
@@ -72,42 +84,23 @@ public class UtilizatorService {
         else{
             Map<Tuple<Long,Long>, Prietenie> map = new HashMap<>();
             for(Prietenie p : repoPrietenie.findAll()) {
-                if(!(p.getId().getLeft() == gasit.getId() || p.getId().getRight() == gasit.getId())) {
-                    map.put(p.getId(), p);
+                if((p.getId().getLeft().toString().equals(gasit.getId().toString()) || p.getId().getRight().toString().equals(gasit.getId().toString()))) {
+                   // map.put(p.getId(), p);
+                    repoPrietenie.delete(p.getId());
                 }
             }
-            repoPrietenie.changeEntities(map);
+            //repoPrietenie.changeEntities(map);
             this.connectPrietenii();
-            return repoUser.delete(gasit.getId());
+            return userDataBase.delete(gasit.getId()).get();
         }
     }
-    public void stergePrieteniiUser(Utilizator utilizator,Prietenie p) {
-          //  if(p.getId().getLeft() == utilizator.getId() || p.getId().getRight() == utilizator.getId()) {
-
-
-//                if(p.getId().getLeft().toString().equals(utilizator.getId())){
-//
-//                    System.out.println("User stanga" + p);
-//                    Prietenie ptr = repoPrietenie.delete(new Tuple<>(utilizator.getId(),p.getId().getRight()));
-//
-//                }
-          //      if(true){
-
-                    System.out.println("User dreapta" + p);
-                    try {
-                        Prietenie ptr = repoPrietenie.delete(new Tuple<>(p.getId().getLeft(), p.getId().getRight()));
-
-                    }
-                    catch(Exception ex){
-
-                    }
-            //    }
-
-           //  }
-    }
-
 
     public void connectPrietenii(){
+        for(Utilizator user: this.getAllUsers()){
+            user.deleteAllFriends();
+        }
+
+
         Long id1,id2;
         for(Prietenie p : this.getAllFriends()){
             id1 = p.getId().getLeft();
@@ -121,7 +114,7 @@ public class UtilizatorService {
 
 
     public Utilizator findOneUser(long id){
-        return repoUser.findOne(id);
+        return userDataBase.findOne(id).get();
     }
 
     public Iterable<Prietenie> getAllFriends(){
@@ -139,9 +132,13 @@ public class UtilizatorService {
         }
 
         Prietenie ptr = new Prietenie(gasitUser1.getId(), gasitUser2.getId(), LocalDateTime.now());
-        Prietenie task = repoPrietenie.save(ptr);
+
+        Prietenie ptr2 = new Prietenie(gasitUser2.getId(), gasitUser1.getId(), LocalDateTime.now());
+        if(repoPrietenie.findOne(ptr2.getId()).isEmpty()) {
+            repoPrietenie.save(ptr);
+        }
         this.connectPrietenii();
-        return task;
+        return ptr;
     }
     public Prietenie stergePrietenie(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2) throws Exception{
         Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
@@ -153,7 +150,7 @@ public class UtilizatorService {
             throw new Exception("Userul2 nu exista!");
         }
 
-        Prietenie ptr = repoPrietenie.delete(new Tuple<>(gasitUser1.getId(),gasitUser2.getId()));
+        Prietenie ptr = repoPrietenie.delete(new Tuple<>(gasitUser1.getId(),gasitUser2.getId())).get();
         this.connectPrietenii();
         return ptr;
     }
@@ -161,10 +158,10 @@ public class UtilizatorService {
 
 
     public Integer numarComunitati(){
-        Graph g = new Graph(((Collection<?>)repoUser.findAll()).size());
-        Map<Long,ElementGraph> entities = new HashMap<>();
+        Graph g = new Graph(((Collection<?>)userDataBase.findAll()).size());
+        Map<Long, ElementGraph> entities = new HashMap<>();
         int i=0;
-        for(Utilizator u: repoUser.findAll()){
+        for(Utilizator u: userDataBase.findAll()){
             ElementGraph elem = new ElementGraph(u);
             elem.setIdGraph(i);
             entities.put(u.getId(),elem);
@@ -189,10 +186,10 @@ public class UtilizatorService {
 
 
     public ArrayList<ArrayList<String>> comunitateSociabila() {
-        Graph g = new Graph(((Collection<?>)repoUser.findAll()).size());
+        Graph g = new Graph(((Collection<?>)userDataBase.findAll()).size());
         Map<Long,ElementGraph> entities = new HashMap<>();
         int i=0;
-        for(Utilizator u: repoUser.findAll()){
+        for(Utilizator u: userDataBase.findAll()){
             ElementGraph elem = new ElementGraph(u);
             elem.setIdGraph(i);
             entities.put(u.getId(),elem);
@@ -227,5 +224,41 @@ public class UtilizatorService {
             }
         }
         return biggestArray;
+    }
+    public static <T> Collector<T, ?, T> toSingleton() {
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> {
+                    if (list.size() != 1) {
+                        throw new IllegalStateException();
+                    }
+                    return list.get(0);
+                }
+        );
+    }
+    public List<PrietenieDTO> relatiiUser(String firstNameUser1,String lastNameUser1){
+        Predicate<Utilizator> byFirstName= x->x.getFirstName().equals(firstNameUser1);
+        Predicate<Utilizator> byLastName= x->x.getLastName().equals(lastNameUser1);
+        List<PrietenieDTO> allUsers;
+      try {
+           Utilizator resultUser = StreamSupport.stream(userDataBase.findAll().spliterator(), false)
+                .filter(byFirstName)
+                .filter(byLastName)
+                .collect(toSingleton());
+           allUsers = StreamSupport.stream(resultUser.getFriends().spliterator(), false)
+                  .map(x->new PrietenieDTO(x.getFirstName(),x.getLastName(),
+                          StreamSupport.stream(repoPrietenie.findAll().spliterator(), false)
+                                  .filter(a -> a.getId().getLeft().toString().equals(resultUser.getId().toString())
+                                          || a.getId().getRight().toString().equals(resultUser.getId().toString()))
+                                  .collect(Collectors.toList()).get(0).getDate()
+                  ))
+                  .collect(Collectors.toList());
+
+      }
+       catch(IllegalStateException ex){
+           throw new ServiceException("Utilizatorul nu a fost gasit!");
+        }
+
+        return allUsers;
     }
 }

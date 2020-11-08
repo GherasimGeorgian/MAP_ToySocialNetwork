@@ -1,17 +1,23 @@
 package socialnetwork.ui;
 
-import socialnetwork.domain.validators.ValidationException;
-import socialnetwork.repository.repo_validators.RepositoryException;
-import socialnetwork.service.UtilizatorService;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+        import socialnetwork.domain.Prietenie;
+        import socialnetwork.domain.PrietenieDTO;
+        import socialnetwork.domain.validators.ValidationException;
+        import socialnetwork.repository.repo_validators.RepositoryException;
+        import socialnetwork.service.ServiceException;
+        import socialnetwork.service.UserServiceDB;
+        import socialnetwork.service.UserServiceFullDB;
 
-public class SocialNetworkUI {
-    private UtilizatorService userService;
+        import java.util.ArrayList;
+        import java.util.List;
+        import java.util.Scanner;
+
+public class SocialNetworkUIFullDB {
+    private UserServiceFullDB userService;
 
 
-    public void setService(UtilizatorService service) {
+    public void setService(UserServiceFullDB service) {
         this.userService = service;
     }
 
@@ -30,6 +36,8 @@ public class SocialNetworkUI {
         System.out.println("6. Sterge o prietenie");
         System.out.println("7. Afisare numar de comunitati(numarul de componente conexe din graful retelei)");
         System.out.println("8. Afisare cea mai sociabila comunitate (componenta conexa din retea cu cel mai lung drum)");
+        System.out.println("9. Afiseaza toate relatiile de prietenie ale unui user");
+        System.out.println("10. Afiseaza toate relatiile de prietenie ale unui user intr-un interval de timp");
 
         System.out.println("0. Exit");
     }
@@ -70,6 +78,9 @@ public class SocialNetworkUI {
                 case "8":
                     comunitateSociabila();
                     break;
+                case "9":
+                    relatiiUser();
+                    break;
                 case "0":
                     System.out.println("Bye");
                     isRunning = false;
@@ -104,7 +115,7 @@ public class SocialNetworkUI {
             System.out.println("Error: " + er.getMessage());
         }
         catch(Exception e){
-            System.out.println("Eroare la introducerea datelor!");
+            System.out.println("Eroare la introducerea datelor!" + e.getMessage());
         }
     }
     private void stergeUtilizator(){
@@ -197,18 +208,26 @@ public class SocialNetworkUI {
             ArrayList<ArrayList<String>> result = userService.comunitateSociabila();
 
 
-
-//            for(ArrayList<String> listofList : result){
-//                System.out.println("Comunitate next:");
-//                for(String str : listofList){
-//                    System.out.println(str);
-//                }
-//                System.out.printf("%n");
-//            }
             userService.biggestArray(result).forEach(System.out::println);
 
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+    private void  relatiiUser(){
+        try{
+            System.out.println("Da-ti numele si prenumele pentru a vedea relatiile unui user: ");
+            String firstNameUser1 = input("firstNameUser1 = ");
+            String lastNameUser1 = input("lastNameUser1 = ");
+            System.out.println("NumePrieten|PrenumePrieten |Data de la care sunt prieteni");
+            for(PrietenieDTO ptr : userService.relatiiUser(firstNameUser1,lastNameUser1)){
+                System.out.println(ptr);
+            }
+
+
+
+        }catch (ServiceException e){
+            System.out.println(e.getMessage());
         }
     }
 }
