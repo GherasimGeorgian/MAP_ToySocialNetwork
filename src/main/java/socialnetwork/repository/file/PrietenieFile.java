@@ -22,7 +22,6 @@ public class PrietenieFile extends AbstractFileRepository<Tuple<Long,Long>, Prie
 
     @Override
     public Prietenie extractEntity(List<String> attributes) {
-       //TODO: implement method
         String stringLdt = attributes.get(2);
         LocalDateTime ldt = LocalDateTime.parse(stringLdt, DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"));
         Prietenie prietenie = new Prietenie(Long.parseLong(attributes.get(0)),Long.parseLong(attributes.get(1)),ldt);

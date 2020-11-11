@@ -3,10 +3,7 @@ package socialnetwork.service;
         import jdk.jshell.execution.Util;
         import socialnetwork.Algorithm.ElementGraph;
         import socialnetwork.Algorithm.Graph;
-        import socialnetwork.domain.Prietenie;
-        import socialnetwork.domain.PrietenieDTO;
-        import socialnetwork.domain.Tuple;
-        import socialnetwork.domain.Utilizator;
+        import socialnetwork.domain.*;
         import socialnetwork.repository.Repository;
         import socialnetwork.repository.RepositoryOptional;
 
@@ -15,15 +12,20 @@ package socialnetwork.service;
         import java.util.function.Predicate;
         import java.util.stream.Collector;
         import java.util.stream.Collectors;
+        import java.util.stream.Stream;
         import java.util.stream.StreamSupport;
 
 public class UserServiceFullDB {
     private RepositoryOptional<Long, Utilizator> userDataBase;
     private RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPrietenie;
+    private RepositoryOptional<Long, Message> messageRepo;
 
-    public UserServiceFullDB(RepositoryOptional<Long,Utilizator> userDataBase,RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPtr) {
+    public UserServiceFullDB(RepositoryOptional<Long,Utilizator> userDataBase,
+                             RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPtr,
+                             RepositoryOptional<Long, Message> messageRepo) {
         this.userDataBase = userDataBase;
         this.repoPrietenie = repoPtr;
+        this.messageRepo = messageRepo;
         connectPrietenii();
     }
 
@@ -236,7 +238,19 @@ public class UserServiceFullDB {
                 }
         );
     }
+
     public List<PrietenieDTO> relatiiUser(String firstNameUser1,String lastNameUser1){
+        String errors = new String();
+        if(firstNameUser1.isEmpty()){
+            errors+="|FirstName is empty!|";
+        }
+        if(lastNameUser1.isEmpty()){
+            errors+="|LastName is empty!|";
+        }
+        if(errors.length()>0){
+            throw new ServiceException(errors);
+        }
+
         Predicate<Utilizator> byFirstName= x->x.getFirstName().equals(firstNameUser1);
         Predicate<Utilizator> byLastName= x->x.getLastName().equals(lastNameUser1);
         List<PrietenieDTO> allUsers;
@@ -260,5 +274,125 @@ public class UserServiceFullDB {
         }
 
         return allUsers;
+    }
+
+    public List<PrietenieDTO> relatiiUserFiltrate(String firstNameUser1,String lastNameUser1,Integer luna) {
+        String errors = new String();
+        if(firstNameUser1.isEmpty()){
+            errors+="|FirstName is empty!|";
+        }
+        if(lastNameUser1.isEmpty()){
+            errors+="|LastName is empty!|";
+        }
+        if(luna < 0){
+            errors+="|Month is negative!|";
+        }
+        if(errors.length()>0){
+            throw new ServiceException(errors);
+        }
+
+        Predicate<Utilizator> byFirstName= x->x.getFirstName().equals(firstNameUser1);
+        Predicate<Utilizator> byLastName= x->x.getLastName().equals(lastNameUser1);
+        Predicate<PrietenieDTO> byMonth = x->x.getDate().getMonthValue() == luna;
+
+        List<PrietenieDTO> allUsers;
+        try {
+            Utilizator resultUser = StreamSupport.stream(userDataBase.findAll().spliterator(), false)
+                    .filter(byFirstName)
+                    .filter(byLastName)
+                    .collect(toSingleton());
+            allUsers = StreamSupport.stream(resultUser.getFriends().spliterator(), false)
+                    .map(x->new PrietenieDTO(x.getFirstName(),x.getLastName(),
+                            StreamSupport.stream(repoPrietenie.findAll().spliterator(), false)
+                                    .filter(a -> a.getId().getLeft().toString().equals(resultUser.getId().toString())
+                                            || a.getId().getRight().toString().equals(resultUser.getId().toString()))
+                                    .collect(Collectors.toList()).get(0).getDate()
+                    ))
+                    .filter(byMonth)
+                    .collect(Collectors.toList());
+
+        }
+        catch(IllegalStateException ex){
+            throw new ServiceException("Utilizatorul nu a fost gasit!");
+        }
+
+        return allUsers;
+    }
+
+    public List<Message> afisareConversatii(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        Utilizator gasitUser2 = this.findByNumePrenume(firstNameUser2, lastNameUser2);
+        if(gasitUser2 == null){
+            throw new ServiceException("Userul2 nu exista!");
+        }
+
+        // mesajele de la user1 la user2
+        Predicate<Message> fromUser1=x->x.getFrom().getId().toString().equals(gasitUser1.getId().toString());
+        Predicate<Message> toUser2=x->x.getTo().contains(gasitUser2);
+        List<Message> messagesUser1 = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
+                .filter(fromUser1)
+                .filter(toUser2)
+                .collect(Collectors.toList());
+
+        // mesajele de la user2 la user1
+        Predicate<Message> fromUser2=x->x.getFrom().getId().toString().equals(gasitUser2.getId().toString());
+        Predicate<Message> toUser1=x->x.getTo().contains(gasitUser1);
+        List<Message> messagesUser2 = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
+                .filter(fromUser2)
+                .filter(toUser1)
+                .collect(Collectors.toList());
+
+        //sortam mesajele de la ambii utilizatori in fucntie de data
+        List<Message> sortedList =  Stream.concat(messagesUser1.stream(), messagesUser2.stream())
+                .sorted(Comparator.comparing(Message::getDate))
+                .collect(Collectors.toList());
+
+        return sortedList;
+
+    }
+    public Long createIdMessage(){
+        do{
+            boolean ok = true;
+            Long id = new Random().nextLong();
+            if(id< 0){
+                id *= -1;
+            }
+            for(Message u : messageRepo.findAll()){
+                if(id == u.getId()){
+                    ok =false;
+                    break;
+                }
+            }
+            if(ok)
+                return id;
+        }while(true);
+    }
+    public void trimiteMesaj(String firstNameUser1,String lastNameUser1,List<AbstractMap.SimpleImmutableEntry<String, String>> useri,String mesaj,Long idreply){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        List<Utilizator> utilizatoriTo = new ArrayList<>();
+        for(int i=0;i<useri.size();i++){
+
+            Utilizator gasit = this.findByNumePrenume(useri.get(i).getKey(), useri.get(i).getValue());
+            if(gasitUser1 == null){
+                throw new ServiceException("Userul cu numele +" + useri.get(i).getKey() + " " +  useri.get(i).getValue()+ " nu exista !");
+            }
+            utilizatoriTo.add(gasit);
+        }
+        Message msg;
+        if(idreply == -1){
+             msg = new Message(createIdMessage(),gasitUser1,utilizatoriTo,mesaj,LocalDateTime.now());
+        }
+        else{
+            Message mesajRaspuns=messageRepo.findOne(idreply).get();
+            Message mesajBaza = new Message(createIdMessage(),gasitUser1,utilizatoriTo,mesaj,LocalDateTime.now());
+            msg = new ReplyMessage(mesajBaza,mesajRaspuns.getId(),mesajRaspuns.getFrom(),mesajRaspuns.getTo(),mesajRaspuns.getMessage(),mesajRaspuns.getDate());
+           }
+        messageRepo.save(msg);
     }
 }

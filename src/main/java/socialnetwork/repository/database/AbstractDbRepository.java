@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractDbRepository <ID, E extends Entity<ID>> extends InMemoryRepositoryOptional<ID,E> {
 
@@ -51,6 +52,12 @@ public abstract class AbstractDbRepository <ID, E extends Entity<ID>> extends In
     }
 
     @Override
+    public Iterable<E> findAll() {
+        loadData();
+        return super.findAll();
+    }
+
+    @Override
     public Optional<E> save(E entity){
         Optional<E> e=super.save(entity);
         if (e.isEmpty())
@@ -68,6 +75,9 @@ public abstract class AbstractDbRepository <ID, E extends Entity<ID>> extends In
         return e;
 
     }
+
+
+
 
     @Override
     public Optional<E> delete(ID id){

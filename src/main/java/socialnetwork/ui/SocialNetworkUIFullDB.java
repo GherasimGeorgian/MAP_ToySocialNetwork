@@ -1,6 +1,7 @@
 package socialnetwork.ui;
 
 
+        import socialnetwork.domain.Message;
         import socialnetwork.domain.Prietenie;
         import socialnetwork.domain.PrietenieDTO;
         import socialnetwork.domain.validators.ValidationException;
@@ -9,9 +10,7 @@ package socialnetwork.ui;
         import socialnetwork.service.UserServiceDB;
         import socialnetwork.service.UserServiceFullDB;
 
-        import java.util.ArrayList;
-        import java.util.List;
-        import java.util.Scanner;
+        import java.util.*;
 
 public class SocialNetworkUIFullDB {
     private UserServiceFullDB userService;
@@ -38,6 +37,8 @@ public class SocialNetworkUIFullDB {
         System.out.println("8. Afisare cea mai sociabila comunitate (componenta conexa din retea cu cel mai lung drum)");
         System.out.println("9. Afiseaza toate relatiile de prietenie ale unui user");
         System.out.println("10. Afiseaza toate relatiile de prietenie ale unui user intr-un interval de timp");
+        System.out.println("11. Afiseaza conversatiile a doi utilizatori(cronologic)");
+        System.out.println("12. Trimite un mesaj");
 
         System.out.println("0. Exit");
     }
@@ -80,6 +81,15 @@ public class SocialNetworkUIFullDB {
                     break;
                 case "9":
                     relatiiUser();
+                    break;
+                case "10":
+                    relatiiUserFiltrare();
+                    break;
+                case "11":
+                    afisareConversatii();
+                    break;
+                case "12":
+                    trimiteMesaj();
                     break;
                 case "0":
                     System.out.println("Bye");
@@ -220,10 +230,88 @@ public class SocialNetworkUIFullDB {
             String firstNameUser1 = input("firstNameUser1 = ");
             String lastNameUser1 = input("lastNameUser1 = ");
             System.out.println("NumePrieten|PrenumePrieten |Data de la care sunt prieteni");
-            for(PrietenieDTO ptr : userService.relatiiUser(firstNameUser1,lastNameUser1)){
-                System.out.println(ptr);
+            List<PrietenieDTO> ptrList=userService.relatiiUser(firstNameUser1,lastNameUser1);
+            if(!(ptrList.isEmpty())) {
+                for (PrietenieDTO ptr : ptrList) {
+                    System.out.println(ptr);
+                }
+            }
+            else
+                System.out.println("Nu s-au gasit inregistrari");
+
+        }catch (ServiceException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void relatiiUserFiltrare(){
+        try{
+            System.out.println("Da-ti numele si prenumele pentru a vedea relatiile unui user: ");
+            String firstNameUser1 = input("firstNameUser1 = ");
+            String lastNameUser1 = input("lastNameUser1 = ");
+            Integer luna = Integer.parseInt(input("Da-ti luna: "));
+
+            System.out.println("NumePrieten|PrenumePrieten |Data de la care sunt prieteni");
+            List<PrietenieDTO> ptrList=userService.relatiiUserFiltrate(firstNameUser1,lastNameUser1,luna);
+            if(!(ptrList.isEmpty())) {
+                for (PrietenieDTO ptr : ptrList) {
+                    System.out.println(ptr);
+                }
+            }else
+                System.out.println("Nu s-au gasit inregistrari");
+
+        }catch (ServiceException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void afisareConversatii(){
+        try{
+            String firstNameUser1 = input("firstNameUser1 = ");
+            String lastNameUser1 = input("lastNameUser1 = ");
+
+            Integer nr_useri = Integer.parseInt(input("Da-ti numarul de useri pentru care vreti sa trimiteti mesajul: "));
+
+
+            String firstNameUser2= input("firstNameUser2 = ");
+            String lastNameUser2 = input("lastNameUser2 = ");
+
+
+            List<Message> mesaje = userService.afisareConversatii(firstNameUser1,lastNameUser1,firstNameUser2,lastNameUser2);
+
+            for(Message msg: mesaje){
+                System.out.println(msg);
+                System.out.println('\n');
             }
 
+        }catch (ServiceException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void trimiteMesaj(){
+        try{
+            String firstNameUser1 = input("firstNameUser1 = ");
+            String lastNameUser1 = input("lastNameUser1 = ");
+
+            Integer nr_useri = Integer.parseInt(input("Da-ti numarul de useri pentru care vreti sa trimiteti mesajul: "));
+
+            List<AbstractMap.SimpleImmutableEntry<String, String>> useri = new ArrayList<>();
+            while(nr_useri>0) {
+                String firstNameUser2 = input("firstNameUser2 = ");
+                String lastNameUser2 = input("lastNameUser2 = ");
+                useri.add(new AbstractMap.SimpleImmutableEntry<>(firstNameUser2, lastNameUser2));
+                nr_useri--;
+            }
+            String mesaj = input("Introdu mesajul pe care doresti sa-l trimiti: ");
+
+            String reply = input("Reply? Yes/No: ");
+            Long idreply;
+            if(reply.equals("yes")){
+                idreply = Long.parseLong(input("Introduceti id-ul mesajului la care da-ti reply "));
+            }
+            else{
+                idreply =(long)-1;
+            }
+
+            userService.trimiteMesaj(firstNameUser1,lastNameUser1,useri,mesaj,idreply);
 
 
         }catch (ServiceException e){
