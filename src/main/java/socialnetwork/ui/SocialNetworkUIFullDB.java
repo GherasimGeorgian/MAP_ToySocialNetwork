@@ -1,6 +1,7 @@
 package socialnetwork.ui;
 
 
+        import socialnetwork.domain.Invite;
         import socialnetwork.domain.Message;
         import socialnetwork.domain.Prietenie;
         import socialnetwork.domain.PrietenieDTO;
@@ -39,6 +40,8 @@ public class SocialNetworkUIFullDB {
         System.out.println("10. Afiseaza toate relatiile de prietenie ale unui user intr-un interval de timp");
         System.out.println("11. Afiseaza conversatiile a doi utilizatori(cronologic)");
         System.out.println("12. Trimite un mesaj");
+        System.out.println("13. Trimite o invitatie de prietenie");
+        System.out.println("14. Vezi cereriile de prietenie");
 
         System.out.println("0. Exit");
     }
@@ -90,6 +93,12 @@ public class SocialNetworkUIFullDB {
                     break;
                 case "12":
                     trimiteMesaj();
+                    break;
+                case "13":
+                    trimiteInvitatie();
+                    break;
+                case "14":
+                    cereriPrietenie();
                     break;
                 case "0":
                     System.out.println("Bye");
@@ -268,8 +277,6 @@ public class SocialNetworkUIFullDB {
             String firstNameUser1 = input("firstNameUser1 = ");
             String lastNameUser1 = input("lastNameUser1 = ");
 
-            Integer nr_useri = Integer.parseInt(input("Da-ti numarul de useri pentru care vreti sa trimiteti mesajul: "));
-
 
             String firstNameUser2= input("firstNameUser2 = ");
             String lastNameUser2 = input("lastNameUser2 = ");
@@ -313,6 +320,58 @@ public class SocialNetworkUIFullDB {
 
             userService.trimiteMesaj(firstNameUser1,lastNameUser1,useri,mesaj,idreply);
 
+
+        }catch (ServiceException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void trimiteInvitatie(){
+        try{
+            System.out.println("Introdu userul care trimite invitatia");
+            String firstNameUser1 = input("firstNameUser1 = ");
+            String lastNameUser1 = input("lastNameUser1 = ");
+
+            System.out.println("Introdu userul care primeste invitatia");
+            String firstNameUser2 = input("firstNameUser2 = ");
+            String lastNameUser2 = input("lastNameUser2 = ");
+
+
+
+            userService.trimiteInvitatie(firstNameUser1,lastNameUser1,firstNameUser2,lastNameUser2);
+
+
+        }catch (ServiceException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void cereriPrietenie(){
+        try{
+            String firstNameUser1 = input("firstNameUser1 = ");
+            String lastNameUser1 = input("lastNameUser1 = ");
+            List<Invite> invitatiiUser = userService.invitationsByUser(firstNameUser1,lastNameUser1);
+
+            System.out.println("Toate invitatiile userului " + firstNameUser1 + " " + lastNameUser1 +" " +  "sunt:");
+            for(Invite inv : invitatiiUser){
+                System.out.println(inv);
+            }
+            if(invitatiiUser.size()>0) {
+                System.out.println("Doresti sa modifici o invitatie? yes/no");
+                String raspuns = input("");
+                if (raspuns.toLowerCase().equals("yes")) {
+                    System.out.println("Introdu id-ul invitatiei pe care doresti s-o modifici:");
+                    Long idInvite = Long.parseLong(input("Id invite = "));
+                    System.out.println("1. Accepta \n 2. Sterge");
+                    String raspuns2 = input("Optiune:");
+                    if (raspuns2.equals("1")) {
+                        //accepta o invitatie
+                        userService.acceptaInvitatie(idInvite);
+                    } else if (raspuns2.equals("2")) {
+                        userService.stergeInvitatie(idInvite);
+                    }
+                }
+            }else{
+                System.out.println("Nu exista invitatii");
+            }
 
         }catch (ServiceException e){
             System.out.println(e.getMessage());

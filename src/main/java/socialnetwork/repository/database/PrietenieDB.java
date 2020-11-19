@@ -1,5 +1,6 @@
 package socialnetwork.repository.database;
 
+import socialnetwork.domain.Message;
 import socialnetwork.domain.Prietenie;
 import socialnetwork.domain.Tuple;
 import socialnetwork.domain.Utilizator;
@@ -81,5 +82,12 @@ public class PrietenieDB extends AbstractDbRepository<Tuple<Long,Long>, Prieteni
     @Override
     public String abstractDelete(Tuple<Long,Long> id){
         return new String("DELETE FROM prietenie where id_left='" + id.getLeft().toString() + "' and id_right='" + id.getRight().toString() + "'");
+    }
+    @Override
+    public String abstractUpdate(){
+        return new String("");
+    }
+    public void abstractUpdateParameters(PreparedStatement stmt, Prietenie entity){
+        //TODO
     }
 }

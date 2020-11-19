@@ -7,6 +7,7 @@ package socialnetwork.service;
         import socialnetwork.repository.Repository;
         import socialnetwork.repository.RepositoryOptional;
 
+        import javax.swing.text.html.Option;
         import java.time.LocalDateTime;
         import java.util.*;
         import java.util.function.Predicate;
@@ -19,13 +20,16 @@ public class UserServiceFullDB {
     private RepositoryOptional<Long, Utilizator> userDataBase;
     private RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPrietenie;
     private RepositoryOptional<Long, Message> messageRepo;
+    private RepositoryOptional<Long, Invite> inviteRepo;
 
     public UserServiceFullDB(RepositoryOptional<Long,Utilizator> userDataBase,
                              RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPtr,
-                             RepositoryOptional<Long, Message> messageRepo) {
+                             RepositoryOptional<Long, Message> messageRepo,
+                             RepositoryOptional<Long, Invite> inviteRepo) {
         this.userDataBase = userDataBase;
         this.repoPrietenie = repoPtr;
         this.messageRepo = messageRepo;
+        this.inviteRepo = inviteRepo;
         connectPrietenii();
     }
 
@@ -394,5 +398,85 @@ public class UserServiceFullDB {
             msg = new ReplyMessage(mesajBaza,mesajRaspuns.getId(),mesajRaspuns.getFrom(),mesajRaspuns.getTo(),mesajRaspuns.getMessage(),mesajRaspuns.getDate());
            }
         messageRepo.save(msg);
+    }
+    public void trimiteInvitatie(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        Utilizator gasitUser2 = this.findByNumePrenume(firstNameUser2, lastNameUser2);
+        if(gasitUser2 == null){
+            throw new ServiceException("Userul2 nu exista!");
+        }
+
+        //verificam daca este deja prieten x cu y
+        Optional<Prietenie> prietenie1 = repoPrietenie.findOne(new Tuple<>(gasitUser1.getId(),gasitUser2.getId()));
+        Optional<Prietenie> prietenie2 = repoPrietenie.findOne(new Tuple<>(gasitUser2.getId(),gasitUser1.getId()));
+        if(prietenie1.isEmpty() && prietenie2.isEmpty()){
+            Invite invitatie = new Invite(createIdInvite(),gasitUser1,gasitUser2,LocalDateTime.now(),InviteStatus.PENDING);
+            inviteRepo.save(invitatie);
+        }
+        else{
+            throw new ServiceException("Cei 2 useri sunt deja prieteni!");
+        }
+
+
+    }
+
+    public List<Invite> invitationsByUser(String firstNameUser1,String lastNameUser1){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        Predicate<Invite> toUser=x->x.getToInvite().equals(gasitUser1);
+        Predicate<Invite> statusInv = x->x.getStatus().equals(InviteStatus.PENDING);
+        List<Invite> invitationsUser = StreamSupport.stream(inviteRepo.findAll().spliterator(), false)
+                .filter(toUser)
+                .filter(statusInv)
+                .collect(Collectors.toList());
+        return invitationsUser;
+    }
+    public Long createIdInvite(){
+        do{
+            boolean ok = true;
+            Long id = new Random().nextLong();
+            if(id< 0){
+                id *= -1;
+            }
+            for(Invite u : inviteRepo.findAll()){
+                if(id == u.getId()){
+                    ok =false;
+                    break;
+                }
+            }
+            if(ok)
+                return id;
+        }while(true);
+    }
+    public void acceptaInvitatie(Long idInvite){
+        //modificare stare din pending in approved
+        Optional<Invite> invitatie = inviteRepo.findOne(idInvite);
+        if(invitatie.isEmpty()){
+            throw new ServiceException("Invitatia introdusa nu exista!");
+        }
+        invitatie.get().setStatus(InviteStatus.APPROVED);
+        Optional<Invite> invite =  inviteRepo.update(invitatie.get());
+
+        //adaugare prietenii respective
+        if(invite.isPresent()){
+            Prietenie ptr_noua = new Prietenie(invite.get().getFromInvite().getId(),invite.get().getToInvite().getId(),LocalDateTime.now());
+            repoPrietenie.save(ptr_noua);
+            connectPrietenii();
+        }
+
+    }
+    public void stergeInvitatie(Long idInvite){
+        Optional<Invite> invitatie = inviteRepo.findOne(idInvite);
+        if(invitatie.isEmpty()){
+            throw new ServiceException("Invitatia introdusa nu exista!");
+        }
+        invitatie.get().setStatus(InviteStatus.REJECTED);
+        Optional<Invite> invite =  inviteRepo.update(invitatie.get());
+
     }
 }

@@ -35,6 +35,10 @@ public abstract class AbstractDbRepository <ID, E extends Entity<ID>> extends In
 
     public abstract void abstractInsertParameters(PreparedStatement stmt,E entity);
 
+    public abstract String abstractUpdate();
+
+    public abstract void abstractUpdateParameters(PreparedStatement stmt,E entity);
+
     private void loadData() {
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -110,5 +114,25 @@ public abstract class AbstractDbRepository <ID, E extends Entity<ID>> extends In
             }
         }
         return entities.values();
+    }
+
+    @Override
+    public Optional<E> update(E entity) {
+        Optional<E> optional = super.update(entity);
+        if(optional.isPresent()) {
+            try (Connection connection = DriverManager.getConnection(url, username, password);
+                 PreparedStatement stmt = connection
+                         .prepareStatement(abstractUpdate())) {
+
+                abstractUpdateParameters(stmt,entity);
+                int update = stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return optional;
+        }
+        else {
+            return Optional.empty();
+        }
     }
 }

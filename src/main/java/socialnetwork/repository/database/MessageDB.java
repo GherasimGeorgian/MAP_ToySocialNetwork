@@ -1,6 +1,7 @@
 package socialnetwork.repository.database;
 
 import jdk.jshell.execution.Util;
+import socialnetwork.domain.Invite;
 import socialnetwork.domain.Message;
 import socialnetwork.domain.ReplyMessage;
 import socialnetwork.domain.Utilizator;
@@ -89,7 +90,7 @@ public class MessageDB  extends AbstractDbRepository<Long, Message>{
                         toUsers = user.getId().toString();
                     }
                     else {
-                        toUsers += toUsers + "," + user.getId().toString();
+                        toUsers += "," + user.getId().toString();
                     }
                     i++;
                 }
@@ -112,7 +113,7 @@ public class MessageDB  extends AbstractDbRepository<Long, Message>{
                         toUsers = user.getId().toString();
                     }
                     else {
-                        toUsers += toUsers + "," + user.getId().toString();
+                        toUsers += "," + user.getId().toString();
                     }
                     i++;
                 }
@@ -132,6 +133,13 @@ public class MessageDB  extends AbstractDbRepository<Long, Message>{
     public String abstractDelete(Long id){
         return new String("DELETE FROM message where id='" + id.toString() + "'");
     }
-
+    @Override
+    public String abstractUpdate(){
+        //TODO
+        return new String("");
+    }
+    public void abstractUpdateParameters(PreparedStatement stmt, Message entity){
+        //TODO
+    }
 
 }

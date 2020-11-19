@@ -13,11 +13,6 @@ public class ReplyMessage extends Message{
     public ReplyMessage(Message msg,Long id,Utilizator from, List<Utilizator> to, String message, LocalDateTime date){
         super(msg.getId(), msg.getFrom(), msg.getTo(), msg.getMessage(), msg.getDate());
           replyMessage = new Message(id,from,to,message,date);
-//        this.replyMessage.setId(id);
-//        this.replyMessage.setFrom(from);
- //       this.replyMessage.setTo(to);
- //       this.replyMessage.setMessage(message);
- //       this.replyMessage.setDate(date);
     }
 
     public Message getReplyMessage() {

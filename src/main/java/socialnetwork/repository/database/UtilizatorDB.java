@@ -1,5 +1,6 @@
 package socialnetwork.repository.database;
 
+import socialnetwork.domain.Prietenie;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.domain.validators.Validator;
 import socialnetwork.repository.file.AbstractFileRepository;
@@ -53,5 +54,13 @@ public class UtilizatorDB extends AbstractDbRepository<Long, Utilizator> {
     @Override
     public String abstractDelete(Long id){
         return new String("DELETE FROM users where id='" + id.toString() + "'");
+    }
+    @Override
+    public String abstractUpdate(){
+        return new String("");
+    }
+
+    public void abstractUpdateParameters(PreparedStatement stmt, Utilizator entity){
+        //TODO
     }
 }
