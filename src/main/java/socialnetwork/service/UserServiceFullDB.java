@@ -1,22 +1,25 @@
 package socialnetwork.service;
 
-        import jdk.jshell.execution.Util;
-        import socialnetwork.Algorithm.ElementGraph;
-        import socialnetwork.Algorithm.Graph;
-        import socialnetwork.domain.*;
-        import socialnetwork.repository.Repository;
-        import socialnetwork.repository.RepositoryOptional;
+import socialnetwork.Algorithm.ElementGraph;
+import socialnetwork.Algorithm.Graph;
+import socialnetwork.domain.*;
+import socialnetwork.repository.RepositoryOptional;
+import socialnetwork.utils.events.ChangeEventType;
+import socialnetwork.utils.events.PrietenieDTOChangeEvent;
 
-        import javax.swing.text.html.Option;
-        import java.time.LocalDateTime;
-        import java.util.*;
-        import java.util.function.Predicate;
-        import java.util.stream.Collector;
-        import java.util.stream.Collectors;
-        import java.util.stream.Stream;
-        import java.util.stream.StreamSupport;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import socialnetwork.utils.observer.Observable;
+import socialnetwork.utils.observer.Observer;
 
-public class UserServiceFullDB {
+import static java.util.function.Predicate.not;
+
+public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
     private RepositoryOptional<Long, Utilizator> userDataBase;
     private RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPrietenie;
     private RepositoryOptional<Long, Message> messageRepo;
@@ -31,6 +34,26 @@ public class UserServiceFullDB {
         this.messageRepo = messageRepo;
         this.inviteRepo = inviteRepo;
         connectPrietenii();
+    }
+
+
+
+    private List<Observer<PrietenieDTOChangeEvent>> observers=new ArrayList<>();
+
+
+    @Override
+    public void addObserver(Observer<PrietenieDTOChangeEvent> e) {
+        observers.add(e);
+
+    }
+
+    @Override
+    public void removeObserver(Observer<PrietenieDTOChangeEvent> e) {
+        //observers.remove(e);
+    }
+    @Override
+    public void notifyObservers(PrietenieDTOChangeEvent t) {
+        observers.stream().forEach(x->x.update(t));
     }
 
     public Utilizator addUtilizator(String firstName,String lastName) throws Exception{
@@ -77,6 +100,9 @@ public class UserServiceFullDB {
     }
     public Utilizator stergeUtilizator(String firstName, String lastName) throws Exception{
 
+        //TODO
+        //trebuie sa sterg toate mesajele de la userul sters
+        //trebuie sa sterg toate invitatiile de la userul sters
         if(firstName.isEmpty()){
             throw new Exception("FirstName is empty!");
         }
@@ -156,8 +182,20 @@ public class UserServiceFullDB {
             throw new Exception("Userul2 nu exista!");
         }
 
-        Prietenie ptr = repoPrietenie.delete(new Tuple<>(gasitUser1.getId(),gasitUser2.getId())).get();
+
+
+
+        Prietenie ptr;
+        if(repoPrietenie.findOne(new Tuple<>(gasitUser1.getId(),gasitUser2.getId())).isPresent()) {
+            ptr = repoPrietenie.delete(new Tuple<>(gasitUser1.getId(),gasitUser2.getId())).get();
+        }
+        else{
+            ptr =  repoPrietenie.delete(new Tuple<>(gasitUser2.getId(),gasitUser1.getId())).get();
+        }
+
         this.connectPrietenii();
+        notifyObservers(new PrietenieDTOChangeEvent(ChangeEventType.DELETE, null));
+
         return ptr;
     }
     public List<Integer> keys = new ArrayList<Integer>();
@@ -479,4 +517,74 @@ public class UserServiceFullDB {
         Optional<Invite> invite =  inviteRepo.update(invitatie.get());
 
     }
+
+    /**
+     *
+     * @param firstNameUser1
+     * @param lastNameUser1
+     * @return List<Utilizator> lista utilizatorilor care nu sunt prieteni cu Utilizator(firstNameU1,lastNameU2)
+     */
+    public List<Utilizator> notRelatiiUser(String firstNameUser1,String lastNameUser1){
+
+        String errors = new String();
+        if(firstNameUser1.isEmpty()){
+            errors+="|FirstName is empty!|";
+        }
+        if(lastNameUser1.isEmpty()){
+            errors+="|LastName is empty!|";
+        }
+        if(errors.length()>0){
+            throw new ServiceException(errors);
+        }
+        Utilizator resultUser;
+        Predicate<Utilizator> byFirstName= x->x.getFirstName().equals(firstNameUser1);
+        Predicate<Utilizator> byLastName= x->x.getLastName().equals(lastNameUser1);
+        List<Utilizator> unFriends = new ArrayList<>();
+        try {
+             resultUser = StreamSupport.stream(userDataBase.findAll().spliterator(), false)
+                    .filter(byFirstName)
+                    .filter(byLastName)
+                    .collect(toSingleton());
+           for(Utilizator user :userDataBase.findAll()){
+               if(!resultUser.getFriends().contains(user)){
+                   unFriends.add(user);
+               }
+           }
+
+        }
+        catch(IllegalStateException ex){
+            throw new ServiceException("Utilizatorul nu a fost gasit!");
+        }
+        return unFriends;
+
+    }
+
+    /**
+     *
+     * @param firstNameUser1
+     * @param lastNameUser1
+     * @param firstNameUser2
+     * @param lastNameUser2
+     * @return Invitatia de la Utilizator(fistName1 lastName1) pentru Util;izator(firstName2 lastName2) dace exista sau null daca nu exista
+     */
+    public Invite findInvitebytwoUsers(String firstNameUser1, String lastNameUser1,String firstNameUser2, String lastNameUser2){
+
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        Utilizator gasitUser2 = this.findByNumePrenume(firstNameUser2, lastNameUser2);
+        if(gasitUser2 == null){
+            throw new ServiceException("Userul2 nu exista!");
+        }
+
+        for(Invite u : inviteRepo.findAll()){
+            if(gasitUser1.getId().toString().equals(u.getFromInvite().getId().toString()) &&
+                    gasitUser2.getId().toString().equals(u.getToInvite().getId().toString())){
+                return u;
+            }
+        }
+        return null;
+    }
+
 }

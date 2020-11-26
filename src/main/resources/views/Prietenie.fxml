@@ -1,0 +1,83 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+
+
+<AnchorPane prefHeight="654.0" prefWidth="981.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.PrietenieController">
+    <children>
+        <GridPane hgap="10.0" prefHeight="100.0" prefWidth="300.0" vgap="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="79.0" AnchorPane.topAnchor="0.0">
+
+               <Button fx:id="btnLogin" GridPane.columnIndex="1">
+                    Login
+                </Button>
+
+                <Label  fx:id="lblFirstName" GridPane.columnIndex="2"/>
+                <Label  fx:id="lblLastName" GridPane.columnIndex="3"/>
+        </GridPane>
+
+
+        <SplitPane dividerPositions="0.5025536261491318" layoutX="172.0" layoutY="180.0" prefHeight="798.0" prefWidth="1251.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                    <children>
+                        <TableView fx:id="tableViewUserFriends" prefHeight="398.0" prefWidth="324.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <columns>
+                                <TableColumn fx:id="tableColumnFirstName" prefWidth="138.0" text="UserName" />
+                                <TableColumn fx:id="tableColumnLastName" prefWidth="138.0" text="LastName" />
+                                <TableColumn fx:id="tableColumnDate" prefWidth="138.0" text="Data" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </AnchorPane>
+
+                <AnchorPane>
+                    <children>
+                        <GridPane hgap="5.0" prefHeight="137.0" prefWidth="382.0" vgap="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="79.0" AnchorPane.topAnchor="70.0">
+                            <children>
+                                <Label  text="Nume" GridPane.rowIndex="1"/>
+                                <Label  text="Prenume:" GridPane.rowIndex="2" />
+                                <TextField fx:id="textFieldFirstName" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <TextField fx:id="textFieldLastName" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+
+                                <Button fx:id="btnsearchFriendsUser" GridPane.rowIndex="3">
+                                    Cauta Prieteni
+                                </Button>
+
+                                <Button mnemonicParsing="false" GridPane.rowIndex="4" onAction="#handleDeletePrietenieDto" text="Delete" />
+                                <Button fx:id="btnAddNewFriend" GridPane.rowIndex="5">
+                                    Add new friend
+                                </Button>
+
+                                <Button fx:id="btnfriendrequests" GridPane.rowIndex="6">
+                                    friend requests
+                                </Button>
+
+
+                            </children>
+
+
+                        </GridPane>
+                    </children>
+                </AnchorPane>
+
+
+            </items>
+        </SplitPane>
+    </children>
+</AnchorPane>
