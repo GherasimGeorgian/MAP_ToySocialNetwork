@@ -27,12 +27,15 @@ import socialnetwork.repository.database.InviteDB;
 import socialnetwork.repository.database.MessageDB;
 import socialnetwork.repository.database.PrietenieDB;
 import socialnetwork.repository.database.UtilizatorDB;
+import socialnetwork.service.InviteServiceFullDB;
 import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.utils.events.PrietenieDTOChangeEvent;
 import socialnetwork.utils.observer.Observer;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -43,6 +46,7 @@ import java.util.stream.StreamSupport;
 public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
 
     private UserServiceFullDB service;
+    private InviteServiceFullDB serviceInvite;
     Utilizator current_user;
     private Utilizator user_app;
 
@@ -62,6 +66,10 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
     FriendRequestsController friendrequestsController;
     //
 
+    //message Window
+    LinkedHashSet<Stage> ferestreMessage = new LinkedHashSet<>();
+    MessageController messageController;
+    //
 
 
     ObservableList<PrietenieDTO> modelCurrentUser = FXCollections.observableArrayList();
@@ -107,10 +115,11 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
     @FXML
     Label lblLastName;
 
-    public void setService(UserServiceFullDB Userservice) {
+    public void setService(UserServiceFullDB Userservice, InviteServiceFullDB serviceInviteC) {
         service=Userservice;
+        serviceInvite = serviceInviteC;
         service.addObserver(this);
-     //   initModel();
+
 
     }
     private void initModel() {
@@ -123,8 +132,68 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
         initModel();
     }
 
+
+
+
     @FXML
     public void initialize() {
+
+        for(int i=0;i<5;i++){
+            Stage newStage = new Stage();
+            ferestreMessage.add(newStage);
+        }
+
+        tableViewUserFriends.setRowFactory( tv -> {
+            TableRow<PrietenieDTO> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    PrietenieDTO rowData = row.getItem();
+
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning");
+                    alert.setHeaderText(null);
+                    alert.setContentText(rowData.getFirstName());
+                    //alert.showAndWait();
+
+
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getResource("/views/message.fxml"));
+                        AnchorPane root=fxmlLoader.load();
+                        messageController = fxmlLoader.getController();
+                        Utilizator user_comunicate = service.findByNumePrenume(row.getItem().getFirstName(),row.getItem().getLastName());
+                        messageController.setService(service,current_user,user_comunicate);
+                        Scene scene = new Scene(root, 400, 400);
+
+                        if(ferestreMessage.size() == 5){
+                            ferestreMessage.clear();
+                            for(int i=0;i<5;i++){
+                                Stage newStage = new Stage();
+                                ferestreMessage.add(newStage);
+                            }
+                        }
+
+                        for(Stage st: ferestreMessage) {
+                            if(st.getScene() == null){
+                                st.setTitle(user_comunicate.getId().toString());
+                                st.setScene(scene);
+                            }
+                        }
+
+                        for(Stage st: ferestreMessage){
+                            if(st.getScene()!=null && st.getTitle().equals(user_comunicate.getId().toString()) && !st.isShowing()) {
+                                st.show();
+                            }
+                        }
+
+                    } catch (IOException e) {
+                        Logger logger = Logger.getLogger(getClass().getName());
+                        logger.log(Level.SEVERE, "Failed to create new Window.", e);
+                    }
+                }
+            });
+            return row ;
+        });
 
         //setam butonul add friend false deoarece nu avem selectat nici un user
         btnAddNewFriend.setDisable(true);
@@ -218,7 +287,7 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
                     AnchorPane root=fxmlLoader.load();
 
                     addFriendController =fxmlLoader.getController();
-                    addFriendController.setService(service,current_user);
+                    addFriendController.setService(service,serviceInvite,current_user);
 
                     /*
                      * if "fx:controller" is not set in fxml
@@ -250,7 +319,7 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
                     AnchorPane root=fxmlLoader.load();
 
                     friendrequestsController =fxmlLoader.getController();
-                    friendrequestsController.setService(service,current_user);
+                    friendrequestsController.setService(service,serviceInvite,current_user);
 
                     /*
                      * if "fx:controller" is not set in fxml

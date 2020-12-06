@@ -446,6 +446,9 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         if(gasitUser2 == null){
             throw new ServiceException("Userul2 nu exista!");
         }
+        if(gasitUser1 == gasitUser2){
+            throw new ServiceException("Nu iti poti trimite invitatie tie insusi!");
+        }
 
         //verificam daca este deja prieten x cu y
         Optional<Prietenie> prietenie1 = repoPrietenie.findOne(new Tuple<>(gasitUser1.getId(),gasitUser2.getId()));

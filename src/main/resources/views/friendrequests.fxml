@@ -10,5 +10,38 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="socialnetwork.controller.FriendRequestsController"
             prefHeight="400.0" prefWidth="600.0">
+<children>
+    <SplitPane dividerPositions="0.5025536261491318" layoutX="172.0" layoutY="180.0" prefHeight="798.0" prefWidth="1251.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+        <items>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <children>
+                    <TableView fx:id="tableViewInvite"  prefHeight="398.0" prefWidth="324.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <columns>
+                            <TableColumn fx:id="tableColumnFirstNameTo" prefWidth="138.0" text="FristName" />
+                            <TableColumn fx:id="tableColumnLastNameTo" prefWidth="138.0" text="LastName" />
+                            <TableColumn fx:id="tableColumnStatus" prefWidth="138.0" text="Status" />
+                            <TableColumn fx:id="tableColumnDate" prefWidth="138.0" text="Data" />
+                        </columns>
+                    </TableView>
+                </children>
+            </AnchorPane>
 
+            <AnchorPane>
+                <children>
+                    <GridPane hgap="5.0" prefHeight="137.0" prefWidth="382.0" vgap="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="79.0" AnchorPane.topAnchor="70.0">
+                        <children>
+                            <Button fx:id="btnCancelInvite" onAction="#handleCancelInvite" GridPane.rowIndex="1">
+                                Cancel Invite
+                            </Button>
+                        </children>
+
+
+                    </GridPane>
+                </children>
+            </AnchorPane>
+
+
+        </items>
+    </SplitPane>
+</children>
 </AnchorPane>

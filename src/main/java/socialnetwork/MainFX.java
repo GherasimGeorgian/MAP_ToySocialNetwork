@@ -18,6 +18,7 @@ import socialnetwork.repository.database.InviteDB;
 import socialnetwork.repository.database.MessageDB;
 import socialnetwork.repository.database.PrietenieDB;
 import socialnetwork.repository.database.UtilizatorDB;
+import socialnetwork.service.InviteServiceFullDB;
 import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.ui.SocialNetworkUIFullDB;
 
@@ -44,17 +45,16 @@ public class MainFX extends Application {
                 new PrietenieDB(url,username, pasword,  new PrietenieValidatorDb(userDataBase));
         RepositoryOptional<Long, Message> messageRepo =
                 new MessageDB(url,username, pasword,new MessageValidator(userDataBase));
-
         RepositoryOptional<Long, Invite> inviteRepo =
                 new InviteDB(url,username, pasword,new InviteValidator(userDataBase));
 
 
 
-        UserServiceFullDB service3 = new UserServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo);
+        UserServiceFullDB serviceUser = new UserServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo);
+        InviteServiceFullDB serviceInvite = new InviteServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo);
 
 
-
-        ctrl.setService(service3);
+        ctrl.setService(serviceUser,serviceInvite);
 
         primaryStage.setScene(new Scene(root, 700, 500));
         primaryStage.setTitle("Hello World");

@@ -10,6 +10,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import socialnetwork.domain.Invite;
 import socialnetwork.domain.Utilizator;
+import socialnetwork.service.InviteServiceFullDB;
+import socialnetwork.service.ServiceException;
 import socialnetwork.service.UserServiceFullDB;
 
 import java.util.List;
@@ -22,13 +24,15 @@ import static socialnetwork.service.UserServiceFullDB.toSingleton;
 public class AddFriendController {
 
     private UserServiceFullDB service;
+    private InviteServiceFullDB serviceInvite;
 
     private  List<Utilizator> notFriends;
     private Utilizator current_user = null;
     private Utilizator selected_user= null;
-    public void setService(UserServiceFullDB service,Utilizator user) {
+    public void setService(UserServiceFullDB service, InviteServiceFullDB serviceInv, Utilizator user) {
         this.current_user = user;
         this.service=service;
+        this.serviceInvite = serviceInv;
         notFriends = service.notRelatiiUser(current_user.getFirstName(),current_user.getLastName());
     }
 
@@ -68,7 +72,15 @@ public class AddFriendController {
                     }
                     // altfel cream o noua invitatie
                     else{
-                        service.trimiteInvitatie(current_user.getFirstName(), current_user.getLastName(),selected_user.getFirstName(),selected_user.getLastName());
+                        try {
+                            serviceInvite.trimiteInvitatie(current_user.getFirstName(), current_user.getLastName(), selected_user.getFirstName(), selected_user.getLastName());
+                        }catch (ServiceException ex){
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Atentie");
+                            alert.setHeaderText(null);
+                            alert.setContentText(ex.getMessage());
+                            alert.showAndWait();
+                        }
                     }
                 }
                 else{
