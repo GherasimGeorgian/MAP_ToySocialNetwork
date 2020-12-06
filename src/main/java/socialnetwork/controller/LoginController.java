@@ -30,7 +30,8 @@ public class LoginController {
 
     @FXML
     Button btnCancel;
-
+  //cava
+    int ceva;
     @FXML
     public void initialize() {
 
