@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.ActivitatiiUser">
+   <children>
+      <DatePicker fx:id="date1" layoutX="69.0" layoutY="109.0" />
+      <DatePicker fx:id="date2" layoutX="285.0" layoutY="109.0" />
+      <Label layoutX="4.0" layoutY="6.0" text="Activitatile unui utilizator dintr-o perioada calendaristica, referitorla prietenii noi creati si mesajele primite in acea perioada" />
+      <Label layoutX="69.0" layoutY="79.0" text="Interval inceput:" />
+      <Label layoutX="287.0" layoutY="79.0" text="Interval sfarsit:" />
+      <Label layoutX="23.0" layoutY="37.0" />
+      <Label layoutX="90.0" layoutY="46.0" text="Selectati utilizatorul:" />
+      <Button fx:id="btn_pdf" layoutX="528.0" layoutY="306.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="92.0" text="Generati PDF" />
+      <ListView fx:id="listRaport" layoutX="23.0" layoutY="162.0" prefHeight="200.0" prefWidth="476.0" />
+      <ComboBox fx:id="comboBoxUsers" layoutX="212.0" layoutY="42.0" prefWidth="150.0" />
+   </children>
+</AnchorPane>

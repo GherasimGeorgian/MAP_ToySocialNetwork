@@ -1,35 +1,22 @@
 package socialnetwork.controller;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import jdk.jshell.execution.Util;
-import socialnetwork.config.ApplicationContext;
 import socialnetwork.domain.*;
-import socialnetwork.domain.validators.InviteValidator;
-import socialnetwork.domain.validators.MessageValidator;
-import socialnetwork.domain.validators.PrietenieValidatorDb;
-import socialnetwork.domain.validators.UtilizatorValidator;
-import socialnetwork.repository.RepositoryOptional;
-import socialnetwork.repository.database.InviteDB;
-import socialnetwork.repository.database.MessageDB;
-import socialnetwork.repository.database.PrietenieDB;
-import socialnetwork.repository.database.UtilizatorDB;
-import socialnetwork.service.InviteServiceFullDB;
 import socialnetwork.service.UserServiceFullDB;
-import socialnetwork.utils.events.PrietenieDTOChangeEvent;
+import socialnetwork.utils.events.ChangeEvent;
 import socialnetwork.utils.observer.Observer;
 
 import java.io.IOException;
@@ -37,16 +24,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
+public class PrietenieController  implements Observer<ChangeEvent> {
 
     private UserServiceFullDB service;
-    private InviteServiceFullDB serviceInvite;
     Utilizator current_user;
     private Utilizator user_app;
 
@@ -115,9 +100,8 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
     @FXML
     Label lblLastName;
 
-    public void setService(UserServiceFullDB Userservice, InviteServiceFullDB serviceInviteC) {
+    public void setService(UserServiceFullDB Userservice) {
         service=Userservice;
-        serviceInvite = serviceInviteC;
         service.addObserver(this);
 
 
@@ -128,7 +112,7 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
     }
 
     @Override
-    public void update(PrietenieDTOChangeEvent messageTaskChangeEvent) {
+    public void update(ChangeEvent messageTaskChangeEvent) {
         initModel();
     }
 
@@ -194,6 +178,77 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
             });
             return row ;
         });
+
+
+        //multiple selects
+        tableViewUserFriends.getSelectionModel().setSelectionMode(
+                SelectionMode.MULTIPLE
+        );
+
+
+        tableViewUserFriends.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    ObservableList<PrietenieDTO> selectedItems = tableViewUserFriends.getSelectionModel().getSelectedItems();
+                    if (selectedItems.size() > 1) {
+
+                        ArrayList<Utilizator> usersTo = new ArrayList<Utilizator>();
+                        for (PrietenieDTO row : selectedItems) {
+                            usersTo.add(service.findByNumePrenume(row.getFirstName(), row.getLastName()));
+                        }
+
+                        try {
+                            FXMLLoader fxmlLoader = new FXMLLoader();
+                            fxmlLoader.setLocation(getClass().getResource("/views/message.fxml"));
+                            AnchorPane root=fxmlLoader.load();
+                            messageController = fxmlLoader.getController();
+                            messageController.setServiceMultipleUsers(service,current_user,usersTo);
+                            Scene scene = new Scene(root, 400, 400);
+
+                            String idsUsers = new String();
+                            for(Utilizator user : usersTo){
+                                idsUsers+= user.getId().toString();
+                            }
+
+                            if(ferestreMessage.size() == 5){
+                                ferestreMessage.clear();
+                                for(int i=0;i<5;i++){
+                                    Stage newStage = new Stage();
+                                    ferestreMessage.add(newStage);
+                                }
+                            }
+
+                            for(Stage st: ferestreMessage) {
+                                if(st.getScene() == null){
+
+                                    st.setTitle(idsUsers);
+                                    st.setScene(scene);
+                                }
+                            }
+
+                            for(Stage st: ferestreMessage){
+                                if(st.getScene()!=null && st.getTitle().equals(idsUsers) && !st.isShowing()) {
+                                    st.show();
+                                }
+                            }
+
+                        } catch (IOException e) {
+                            Logger logger = Logger.getLogger(getClass().getName());
+                            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+                        }
+
+
+                    }
+                    else{
+                        MessageAlert.showErrorMessage(null,"Trebuie sa selectez mai mult de 2 useri!");
+                    }
+                }
+            }
+        });
+
+
 
         //setam butonul add friend false deoarece nu avem selectat nici un user
         btnAddNewFriend.setDisable(true);
@@ -287,13 +342,13 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
                     AnchorPane root=fxmlLoader.load();
 
                     addFriendController =fxmlLoader.getController();
-                    addFriendController.setService(service,serviceInvite,current_user);
+                    addFriendController.setService(service,current_user);
 
                     /*
                      * if "fx:controller" is not set in fxml
                      * fxmlLoader.setController(NewWindowController);
                      */
-                    Scene scene = new Scene(root, 200, 100);
+                    Scene scene = new Scene(root, 500, 500);
 
                     stageAddFriend.setTitle("Add new friend");
                     stageAddFriend.setScene(scene);
@@ -319,13 +374,13 @@ public class PrietenieController  implements Observer<PrietenieDTOChangeEvent> {
                     AnchorPane root=fxmlLoader.load();
 
                     friendrequestsController =fxmlLoader.getController();
-                    friendrequestsController.setService(service,serviceInvite,current_user);
+                    friendrequestsController.setService(service,current_user);
 
                     /*
                      * if "fx:controller" is not set in fxml
                      * fxmlLoader.setController(NewWindowController);
                      */
-                    Scene scene = new Scene(root, 200, 100);
+                    Scene scene = new Scene(root, 1000, 500);
 
                     stagefriendrequests.setTitle("Friend requests");
                     stagefriendrequests.setScene(scene);

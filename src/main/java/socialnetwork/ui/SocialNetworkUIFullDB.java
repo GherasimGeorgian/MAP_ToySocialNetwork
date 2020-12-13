@@ -366,7 +366,11 @@ public class SocialNetworkUIFullDB {
                         //accepta o invitatie
                         userService.acceptaInvitatie(idInvite);
                     } else if (raspuns2.equals("2")) {
-                        userService.stergeInvitatie(idInvite);
+                        try {
+                            userService.stergeInvitatie(idInvite);
+                        }catch (Exception ex){
+
+                        }
                     }
                 }
             }else{

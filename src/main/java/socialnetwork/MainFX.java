@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import socialnetwork.config.ApplicationContext;
+import socialnetwork.controller.LoginStartController;
 import socialnetwork.controller.PrietenieController;
 import socialnetwork.domain.*;
 import socialnetwork.domain.validators.InviteValidator;
@@ -18,7 +19,6 @@ import socialnetwork.repository.database.InviteDB;
 import socialnetwork.repository.database.MessageDB;
 import socialnetwork.repository.database.PrietenieDB;
 import socialnetwork.repository.database.UtilizatorDB;
-import socialnetwork.service.InviteServiceFullDB;
 import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.ui.SocialNetworkUIFullDB;
 
@@ -26,12 +26,7 @@ public class MainFX extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        FXMLLoader loader=new FXMLLoader();
-        loader.setLocation(getClass().getResource("/views/Prietenie.fxml"));
-        AnchorPane root=loader.load();
 
-        // controller set
-        PrietenieController ctrl=loader.getController();
         System.out.println("Reading data from database");
         final String url = ApplicationContext.getPROPERTIES().getProperty("database.socialnetwork.url");
         final String username= ApplicationContext.getPROPERTIES().getProperty("databse.socialnetwork.username");
@@ -51,14 +46,33 @@ public class MainFX extends Application {
 
 
         UserServiceFullDB serviceUser = new UserServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo);
-        InviteServiceFullDB serviceInvite = new InviteServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo);
 
 
-        ctrl.setService(serviceUser,serviceInvite);
+//        FXMLLoader loader=new FXMLLoader();
+//        loader.setLocation(getClass().getResource("/views/Prietenie.fxml"));
+//        AnchorPane root=loader.load();
 
+        // controller set
+//        PrietenieController ctrl=loader.getController();
+//
+//        ctrl.setService(serviceUser);
+//
+//        primaryStage.setScene(new Scene(root, 700, 500));
+//        primaryStage.setTitle("Hello World");
+//        primaryStage.show();
+
+        FXMLLoader loader=new FXMLLoader();
+        loader.setLocation(getClass().getResource("/views/loginStart.fxml"));
+        AnchorPane root=loader.load();
+
+
+        LoginStartController ctrl=loader.getController();
+        ctrl.setService(serviceUser);
         primaryStage.setScene(new Scene(root, 700, 500));
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("LoginPage");
         primaryStage.show();
+
+
     }
 
 

@@ -34,6 +34,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+    compile 'com.itextpdf:itextpdf:5.1.0'
 }
 //pentru junit 5
 test{

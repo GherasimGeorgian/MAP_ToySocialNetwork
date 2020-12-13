@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.LoginStartController">
+    <children>
+
+        <SplitPane layoutX="172.0" layoutY="180.0" prefHeight="798.0" prefWidth="1251.0" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <items>
+
+                <AnchorPane>
+               <children>
+                        <GridPane hgap="5.0" layoutX="34.0" layoutY="182.0" prefHeight="137.0" prefWidth="382.0" vgap="5.0">
+                            <children>
+                                <Label text="Nume" GridPane.rowIndex="1" />
+                                <Label text="Prenume:" GridPane.rowIndex="2" />
+                                <TextField fx:id="textFieldFirstName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <TextField fx:id="textFieldLastName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            </children>
+            
+                                  <children>
+                                <Button fx:id="btnLogin" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    Login
+                                </Button>
+                            </children>
+            
+                                  <children>
+                                <Button fx:id="btnCancel" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                    Cancel
+                                </Button>
+                            </children>
+                     <columnConstraints>
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                       </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                     </rowConstraints>
+                        </GridPane>
+               </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </children>
+
+</AnchorPane>

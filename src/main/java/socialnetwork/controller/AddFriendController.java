@@ -9,8 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import socialnetwork.domain.Invite;
+import socialnetwork.domain.InviteStatus;
 import socialnetwork.domain.Utilizator;
-import socialnetwork.service.InviteServiceFullDB;
 import socialnetwork.service.ServiceException;
 import socialnetwork.service.UserServiceFullDB;
 
@@ -24,15 +24,13 @@ import static socialnetwork.service.UserServiceFullDB.toSingleton;
 public class AddFriendController {
 
     private UserServiceFullDB service;
-    private InviteServiceFullDB serviceInvite;
 
     private  List<Utilizator> notFriends;
     private Utilizator current_user = null;
     private Utilizator selected_user= null;
-    public void setService(UserServiceFullDB service, InviteServiceFullDB serviceInv, Utilizator user) {
+    public void setService(UserServiceFullDB service, Utilizator user) {
         this.current_user = user;
         this.service=service;
-        this.serviceInvite = serviceInv;
         notFriends = service.notRelatiiUser(current_user.getFirstName(),current_user.getLastName());
     }
 
@@ -62,7 +60,7 @@ public class AddFriendController {
                 if(selected_user != null) {
                     //verificam daca exista deja o invitatie
                     Invite inv = service.findInvitebytwoUsers(current_user.getFirstName(), current_user.getLastName(),selected_user.getFirstName(),selected_user.getLastName());
-                    if (inv!= null) {
+                    if (inv!= null && inv.getStatus() != InviteStatus.APPROVED) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Atentie");
                         alert.setHeaderText(null);
@@ -73,7 +71,7 @@ public class AddFriendController {
                     // altfel cream o noua invitatie
                     else{
                         try {
-                            serviceInvite.trimiteInvitatie(current_user.getFirstName(), current_user.getLastName(), selected_user.getFirstName(), selected_user.getLastName());
+                            service.trimiteInvitatie(current_user.getFirstName(), current_user.getLastName(), selected_user.getFirstName(), selected_user.getLastName());
                         }catch (ServiceException ex){
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("Atentie");

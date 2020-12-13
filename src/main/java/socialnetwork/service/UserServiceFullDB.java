@@ -1,12 +1,14 @@
 package socialnetwork.service;
 
+import javafx.scene.control.DatePicker;
 import socialnetwork.Algorithm.ElementGraph;
 import socialnetwork.Algorithm.Graph;
 import socialnetwork.domain.*;
 import socialnetwork.repository.RepositoryOptional;
 import socialnetwork.utils.events.ChangeEventType;
-import socialnetwork.utils.events.PrietenieDTOChangeEvent;
+import socialnetwork.utils.events.ChangeEvent;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
@@ -17,9 +19,7 @@ import java.util.stream.StreamSupport;
 import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
 
-import static java.util.function.Predicate.not;
-
-public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
+public class UserServiceFullDB implements Observable<ChangeEvent> {
     private RepositoryOptional<Long, Utilizator> userDataBase;
     private RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPrietenie;
     private RepositoryOptional<Long, Message> messageRepo;
@@ -38,21 +38,21 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
 
 
 
-    private List<Observer<PrietenieDTOChangeEvent>> observers=new ArrayList<>();
+    private List<Observer<ChangeEvent>> observers=new ArrayList<>();
 
 
     @Override
-    public void addObserver(Observer<PrietenieDTOChangeEvent> e) {
+    public void addObserver(Observer<ChangeEvent> e) {
         observers.add(e);
 
     }
 
     @Override
-    public void removeObserver(Observer<PrietenieDTOChangeEvent> e) {
-        //observers.remove(e);
+    public void removeObserver(Observer<ChangeEvent> e) {
+        observers.remove(e);
     }
     @Override
-    public void notifyObservers(PrietenieDTOChangeEvent t) {
+    public void notifyObservers(ChangeEvent t) {
         observers.stream().forEach(x->x.update(t));
     }
 
@@ -67,6 +67,7 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         }
         else{
             userDataBase.save(utilizator_nou);
+            notifyObservers(new ChangeEvent(ChangeEventType.U_ADD, null));
             return utilizator_nou;
         }
     }
@@ -98,6 +99,9 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
     public Iterable<Utilizator> getAllUsers(){
         return userDataBase.findAll();
     }
+    public List<Utilizator> getAllUsersList(){
+        return  StreamSupport.stream(userDataBase.findAll().spliterator(), true).collect(Collectors.toList());
+    }
     public Utilizator stergeUtilizator(String firstName, String lastName) throws Exception{
 
         //TODO
@@ -123,6 +127,7 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
             }
             //repoPrietenie.changeEntities(map);
             this.connectPrietenii();
+            notifyObservers(new ChangeEvent(ChangeEventType.U_DEL, null));
             return userDataBase.delete(gasit.getId()).get();
         }
     }
@@ -170,6 +175,7 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
             repoPrietenie.save(ptr);
         }
         this.connectPrietenii();
+        notifyObservers(new ChangeEvent(ChangeEventType.P_ADD, null));
         return ptr;
     }
     public Prietenie stergePrietenie(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2) throws Exception{
@@ -194,7 +200,7 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         }
 
         this.connectPrietenii();
-        notifyObservers(new PrietenieDTOChangeEvent(ChangeEventType.DELETE, null));
+        notifyObservers(new ChangeEvent(ChangeEventType.P_DEL, null));
 
         return ptr;
     }
@@ -374,6 +380,7 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         // mesajele de la user1 la user2
         Predicate<Message> fromUser1=x->x.getFrom().getId().toString().equals(gasitUser1.getId().toString());
         Predicate<Message> toUser2=x->x.getTo().contains(gasitUser2);
+
         List<Message> messagesUser1 = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
                 .filter(fromUser1)
                 .filter(toUser2)
@@ -389,6 +396,52 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
 
         //sortam mesajele de la ambii utilizatori in fucntie de data
         List<Message> sortedList =  Stream.concat(messagesUser1.stream(), messagesUser2.stream())
+                .sorted(Comparator.comparing(Message::getDate))
+                .collect(Collectors.toList());
+
+        return sortedList;
+
+    }
+    public List<Message> afisareConversatiiMultipleUsers(String firstNameUser1,String lastNameUser1, List<Utilizator> users){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        //mesajele de la user1 la user2.3.4
+        Predicate<Message> fromUser1=x->x.getFrom().getId().toString().equals(gasitUser1.getId().toString());
+        Predicate<Message> toUser2=x->x.getTo().containsAll(users);
+        List<Message> messagesUser1 = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
+                .filter(fromUser1)
+                .filter(toUser2)
+                .collect(Collectors.toList());
+
+
+
+        //mesajele de la user2 la user1.3.4
+        //mesajele de la user3 la user1.2.4
+        //mesajele de la user4 la user1.2.3
+        for(Utilizator user: users){
+            List<Utilizator> userssTo = new ArrayList<>();
+            userssTo.add(gasitUser1);
+            for (Utilizator usr : users){
+                if(!usr.getId().toString().equals(user.getId().toString())){
+                    userssTo.add(usr);
+                }
+            }
+            Predicate<Message> fromUserR=x->x.getFrom().getId().toString().equals(user.getId().toString());
+            Predicate<Message> toUserR=x->x.getTo().containsAll(userssTo);
+            List<Message> messagesUserR = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
+                    .filter(fromUserR)
+                    .filter(toUserR)
+                    .collect(Collectors.toList());
+            messagesUser1.addAll(messagesUserR);
+        }
+
+
+
+
+        //sortam mesajele de la ambii utilizatori in fucntie de data
+        List<Message> sortedList =  messagesUser1.stream()
                 .sorted(Comparator.comparing(Message::getDate))
                 .collect(Collectors.toList());
 
@@ -412,7 +465,7 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
                 return id;
         }while(true);
     }
-    public void trimiteMesaj(String firstNameUser1,String lastNameUser1,List<AbstractMap.SimpleImmutableEntry<String, String>> useri,String mesaj,Long idreply){
+    public Message trimiteMesaj(String firstNameUser1,String lastNameUser1,List<AbstractMap.SimpleImmutableEntry<String, String>> useri,String mesaj,Long idreply){
         Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
         if(gasitUser1 == null){
             throw new ServiceException("Userul1 nu exista!");
@@ -436,6 +489,8 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
             msg = new ReplyMessage(mesajBaza,mesajRaspuns.getId(),mesajRaspuns.getFrom(),mesajRaspuns.getTo(),mesajRaspuns.getMessage(),mesajRaspuns.getDate());
            }
         messageRepo.save(msg);
+        notifyObservers(new ChangeEvent(ChangeEventType.M_ADD, null));
+        return msg;
     }
     public void trimiteInvitatie(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2){
         Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
@@ -446,16 +501,14 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         if(gasitUser2 == null){
             throw new ServiceException("Userul2 nu exista!");
         }
-        if(gasitUser1 == gasitUser2){
-            throw new ServiceException("Nu iti poti trimite invitatie tie insusi!");
-        }
 
         //verificam daca este deja prieten x cu y
         Optional<Prietenie> prietenie1 = repoPrietenie.findOne(new Tuple<>(gasitUser1.getId(),gasitUser2.getId()));
         Optional<Prietenie> prietenie2 = repoPrietenie.findOne(new Tuple<>(gasitUser2.getId(),gasitUser1.getId()));
         if(prietenie1.isEmpty() && prietenie2.isEmpty()){
-            Invite invitatie = new Invite(createIdInvite(),gasitUser1,gasitUser2,LocalDateTime.now(),InviteStatus.PENDING);
+            Invite invitatie = new Invite(createIdInvite(),gasitUser1,gasitUser2, LocalDateTime.now(),InviteStatus.PENDING);
             inviteRepo.save(invitatie);
+            notifyObservers(new ChangeEvent(ChangeEventType.I_ADD, null));
         }
         else{
             throw new ServiceException("Cei 2 useri sunt deja prieteni!");
@@ -469,11 +522,37 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         if(gasitUser1 == null){
             throw new ServiceException("Userul1 nu exista!");
         }
-        Predicate<Invite> toUser=x->x.getToInvite().equals(gasitUser1);
+        Predicate<Invite> toUser= x->x.getToInvite().equals(gasitUser1);
         Predicate<Invite> statusInv = x->x.getStatus().equals(InviteStatus.PENDING);
         List<Invite> invitationsUser = StreamSupport.stream(inviteRepo.findAll().spliterator(), false)
                 .filter(toUser)
                 .filter(statusInv)
+                .collect(Collectors.toList());
+        return invitationsUser;
+    }
+    public List<Invite> allinvitationsByUser(String firstNameUser1,String lastNameUser1){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        Predicate<Invite> toUser= x->x.getFromInvite().equals(gasitUser1);
+        Predicate<Invite> pending= x->x.getStatus().equals(InviteStatus.PENDING);
+        List<Invite> invitationsUser = StreamSupport.stream(inviteRepo.findAll().spliterator(), false)
+                .filter(toUser)
+                .filter(pending)
+                .collect(Collectors.toList());
+        return invitationsUser;
+    }
+    public List<Invite> allinvitationsToUsers(String firstNameUser1,String lastNameUser1){
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+        Predicate<Invite> toUser= x->x.getToInvite().equals(gasitUser1);
+        Predicate<Invite> pending= x->x.getStatus().equals(InviteStatus.PENDING);
+        List<Invite> invitationsUser = StreamSupport.stream(inviteRepo.findAll().spliterator(), false)
+                .filter(toUser)
+                .filter(pending)
                 .collect(Collectors.toList());
         return invitationsUser;
     }
@@ -509,16 +588,19 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
             repoPrietenie.save(ptr_noua);
             connectPrietenii();
         }
+        notifyObservers(new ChangeEvent(ChangeEventType.P_ADD, null));
 
     }
-    public void stergeInvitatie(Long idInvite){
-        Optional<Invite> invitatie = inviteRepo.findOne(idInvite);
-        if(invitatie.isEmpty()){
-            throw new ServiceException("Invitatia introdusa nu exista!");
-        }
-        invitatie.get().setStatus(InviteStatus.REJECTED);
-        Optional<Invite> invite =  inviteRepo.update(invitatie.get());
+    public Invite stergeInvitatie(Long id) throws Exception{
 
+        if(id == null){
+            throw new Exception("Id-ul invitatiei nu exista!");
+        }
+        Invite invite= inviteRepo.delete(new Long(id)).get();
+
+        notifyObservers(new ChangeEvent(ChangeEventType.I_DEL, null));
+
+        return invite;
     }
 
     /**
@@ -590,4 +672,118 @@ public class UserServiceFullDB implements Observable<PrietenieDTOChangeEvent> {
         return null;
     }
 
+
+    public List<PrietenieDTO> filtreazaPrieteniiInterval(String firstNameUser1, String lastNameUser1, LocalDate date1, LocalDate date2) {
+        LocalDateTime ld1 = date1.atStartOfDay();
+        LocalDateTime ld2 = date2.atStartOfDay();
+
+        String errors = new String();
+        if(firstNameUser1.isEmpty()){
+            errors+="|FirstName is empty!|";
+        }
+        if(lastNameUser1.isEmpty()){
+            errors+="|LastName is empty!|";
+        }
+
+        if(errors.length()>0){
+            throw new ServiceException(errors);
+        }
+
+        Predicate<Utilizator> byFirstName= x->x.getFirstName().equals(firstNameUser1);
+        Predicate<Utilizator> byLastName= x->x.getLastName().equals(lastNameUser1);
+        Predicate<PrietenieDTO> dateCar1 = x->x.getDate().isBefore(ld2);
+        Predicate<PrietenieDTO> dateCar2 = x->x.getDate().isAfter(ld1);
+        System.out.println("ceva");
+        List<PrietenieDTO> allUsers;
+        try {
+            Utilizator resultUser = StreamSupport.stream(userDataBase.findAll().spliterator(), false)
+                    .filter(byFirstName)
+                    .filter(byLastName)
+                    .collect(toSingleton());
+            allUsers = StreamSupport.stream(resultUser.getFriends().spliterator(), false)
+                    .map(x->new PrietenieDTO(x.getFirstName(),x.getLastName(),
+                            StreamSupport.stream(repoPrietenie.findAll().spliterator(), false)
+                                    .filter(a -> a.getId().getLeft().toString().equals(resultUser.getId().toString())
+                                            || a.getId().getRight().toString().equals(resultUser.getId().toString()))
+                                    .collect(Collectors.toList()).get(0).getDate()
+                    ))
+                    .filter(dateCar1)
+                    .filter(dateCar2)
+                    .collect(Collectors.toList());
+
+        }
+        catch(IllegalStateException ex){
+            throw new ServiceException("Utilizatorul nu a fost gasit!");
+        }
+
+        return allUsers;
+    }
+
+
+    public List<Message> mesajePrimiteDeUnUserInterval(String firstNameUser1,String lastNameUser1, LocalDate date1, LocalDate date2){
+        LocalDateTime ld1 = date1.atStartOfDay();
+        LocalDateTime ld2 = date2.atStartOfDay();
+        Predicate<Message> dateCar1 = x->x.getDate().isBefore(ld2);
+        Predicate<Message> dateCar2 = x->x.getDate().isAfter(ld1);
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+
+
+        // mesajele de la user1 la user2
+        Predicate<Message> toUser1=x->x.getTo().contains(gasitUser1);
+
+
+        List<Message> messagesUser1 = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
+                .filter(toUser1)
+                .filter(dateCar1)
+                .filter(dateCar2)
+                .collect(Collectors.toList());
+
+
+        List<Message> sortedList =  messagesUser1.stream()
+                .sorted(Comparator.comparing(Message::getDate))
+                .collect(Collectors.toList());
+
+        return sortedList;
+
+    }
+
+    public List<Message> mesajePrimiteFromOneUserInterval(String firstNameUser1,String lastNameUser1,String firstNameUser2,String lastNameUser2, LocalDate date1, LocalDate date2){
+        LocalDateTime ld1 = date1.atStartOfDay();
+        LocalDateTime ld2 = date2.atStartOfDay();
+        Predicate<Message> dateCar1 = x->x.getDate().isBefore(ld2);
+        Predicate<Message> dateCar2 = x->x.getDate().isAfter(ld1);
+        Utilizator gasitUser1 = this.findByNumePrenume(firstNameUser1, lastNameUser1);
+        if(gasitUser1 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+
+        Utilizator gasitUser2 = this.findByNumePrenume(firstNameUser2, lastNameUser2);
+        if(gasitUser2 == null){
+            throw new ServiceException("Userul1 nu exista!");
+        }
+
+
+
+        Predicate<Message> fromUser2 = x->x.getFrom().getId().toString().equals(gasitUser2.getId().toString());
+        Predicate<Message> toUser1=x->x.getTo().contains(gasitUser1);
+
+
+        List<Message> messagesUser1 = StreamSupport.stream(messageRepo.findAll().spliterator(), false)
+                .filter(toUser1)
+                .filter(fromUser2)
+                .filter(dateCar1)
+                .filter(dateCar2)
+                .collect(Collectors.toList());
+
+
+        List<Message> sortedList =  messagesUser1.stream()
+                .sorted(Comparator.comparing(Message::getDate))
+                .collect(Collectors.toList());
+
+        return sortedList;
+
+    }
 }

@@ -21,16 +21,21 @@ public class ConversationView extends VBox {
     private String conversationUser;
     private ObservableList<Node> speechBubbles = FXCollections.observableArrayList();
 
-
+    Button sendMessageButton;
+    Button replyMessageButton;
+    TextField userInput;
     private Label contactHeaderLeftUser;
     private ScrollPane messageScroller;
     private VBox messageContainer;
     private HBox inputContainer;
 
-    public ConversationView(String conversationPartner,String conversationUser){
+    public ConversationView(String conversationPartner,String conversationUser,Button sendMessageBtn,Button replyMSG,TextField userInp){
         super(5);
         this.conversationPartner = conversationPartner;
         this.conversationUser = conversationUser;
+        this.sendMessageButton = sendMessageBtn;
+        this.replyMessageButton = replyMSG;
+        this.userInput = userInp;
         setupElements();
     }
 
@@ -73,33 +78,40 @@ public class ConversationView extends VBox {
     private void setupInputDisplay(){
         inputContainer = new HBox(5);
 
-        TextField userInput = new TextField();
+
         userInput.setPromptText("Enter message");
 
-        Button sendMessageButton = new Button("Send");
+
         sendMessageButton.disableProperty().bind(userInput.lengthProperty().isEqualTo(0));
-        sendMessageButton.setOnAction(event-> {
-            sendMessage(userInput.getText());
-            userInput.setText("");
-        });
 
-        //For testing purposes
-        Button receiveMessageButton = new Button("Receive");
-        receiveMessageButton.disableProperty().bind(userInput.lengthProperty().isEqualTo(0));
-        receiveMessageButton.setOnAction(event-> {
-            receiveMessage(userInput.getText());
-            userInput.setText("");
-        });
 
-        inputContainer.getChildren().setAll(userInput, sendMessageButton, receiveMessageButton);
+//        //For testing purposes
+//        Button receiveMessageButton = new Button("Receive");
+//        receiveMessageButton.disableProperty().bind(userInput.lengthProperty().isEqualTo(0));
+//        receiveMessageButton.setOnAction(event-> {
+//            receiveMessage(userInput.getText());
+//            userInput.setText("");
+//        });
+
+        inputContainer.getChildren().setAll(userInput, sendMessageButton,replyMessageButton/*, receiveMessageButton*/);
     }
 
-    public void sendMessage(String message){
-        speechBubbles.add(new SpeechBox(message, SpeechDirection.RIGHT));
+    public Node getLast(){
+        return speechBubbles.get(speechBubbles.size() - 1);
+    }
+    public Node getPosition(int x){
+            return speechBubbles.get(speechBubbles.size() - 1 - x);
+    }
+    public Integer getSizeMessages(){
+        return speechBubbles.size();
     }
 
-    public void receiveMessage(String message){
-        speechBubbles.add(new SpeechBox(message, SpeechDirection.LEFT));
+    public void sendMessage(String message,Long id){
+        speechBubbles.add(new SpeechBox(message, SpeechDirection.RIGHT,id));
+    }
+
+    public void receiveMessage(String message,Long id){
+        speechBubbles.add(new SpeechBox(message, SpeechDirection.LEFT,id));
     }
 
 }
