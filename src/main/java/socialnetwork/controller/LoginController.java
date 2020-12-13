@@ -23,6 +23,7 @@ public class LoginController {
     @FXML
     TextField textFieldLastName;
 
+    int valoareMare= -11;
 
     //buttons
     @FXML
