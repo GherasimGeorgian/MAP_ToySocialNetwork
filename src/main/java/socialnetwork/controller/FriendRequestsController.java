@@ -102,6 +102,10 @@ public class FriendRequestsController implements Observer<ChangeEvent> {
 
     @FXML
     public void initialize() {
+
+        tableViewInviteRecieve.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableViewInvite.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         tableColumnFirstNameTo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getToInvite().getFirstName()));
         tableColumnLastNameTo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getToInvite().getLastName()));
         tableColumnDate.setCellValueFactory(new PropertyValueFactory<Invite,LocalDateTime>("dateInvite"));

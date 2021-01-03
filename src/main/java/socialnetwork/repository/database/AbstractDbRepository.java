@@ -4,6 +4,8 @@ import socialnetwork.domain.Entity;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.domain.validators.Validator;
 import socialnetwork.repository.memory.InMemoryRepositoryOptional;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -59,6 +61,12 @@ public abstract class AbstractDbRepository <ID, E extends Entity<ID>> extends In
     public Iterable<E> findAll() {
         loadData();
         return super.findAll();
+    }
+
+    @Override
+    public Page<E> findAll(Pageable pageable) {
+        loadData();
+        return super.findAll(pageable);
     }
 
     @Override

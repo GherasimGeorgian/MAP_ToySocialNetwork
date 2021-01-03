@@ -15,7 +15,8 @@ public class UserPageController {
     private UserServiceFullDB service;
     private Utilizator user_app=null;
 
-    public void setService(UserServiceFullDB service) {
+    public void setService(UserServiceFullDB service,Utilizator connectedUser) {
+        this.user_app = connectedUser;
         this.service=service;
         loadPage();
     }
@@ -28,7 +29,20 @@ public class UserPageController {
 
     }
     public void home(ActionEvent actionEvent) {
+        try{
 
+            Stage stageMessages = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/views/page.fxml"));
+            AnchorPane root = loader.load();
+
+            PageController ctrl=loader.getController();
+            ctrl.setService(service,user_app);
+
+            acdinamic.getChildren().setAll(root);
+        }catch (IOException ex){
+
+        }
     }
 
     public void messages(ActionEvent actionEvent) {

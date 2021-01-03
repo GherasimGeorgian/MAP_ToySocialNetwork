@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.AbonareEventController">
+   <children>
+      <Button id="sale" fx:id="btnAbonare" layoutX="20.0" layoutY="107.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Abonare" />
+      <Button id="sale" fx:id="btnDezabonare" layoutX="20.0" layoutY="170.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Dezabonare" />
+      <TableView fx:id="tableViewEvenimente" layoutX="206.0" layoutY="57.0" prefHeight="268.0" prefWidth="374.0" stylesheets="@../style/tableViewStyle.css">
+        <columns>
+            <TableColumn fx:id="tableColumnEventName" prefWidth="138.0" text="NumeEvent" />
+            <TableColumn fx:id="tableColumnDateEvent" prefWidth="138.0" text="DataEvent" />
+        </columns>
+      </TableView>
+      <Button id="sale" fx:id="btnNext" layoutX="393.0" layoutY="349.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Next &gt;" />
+      <Button id="sale" fx:id="btnPrev" layoutX="307.0" layoutY="349.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="&lt; Prev" />
+   </children>
+</AnchorPane>

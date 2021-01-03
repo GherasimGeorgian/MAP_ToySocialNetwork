@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="464.0" prefWidth="632.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.PageController">
+   <children>
+      <Label fx:id="lblFirstName" layoutX="39.0" layoutY="14.0" text="Label" textFill="WHITE" />
+      <Label fx:id="lblLastName" layoutX="110.0" layoutY="14.0" text="Label" textFill="WHITE" />
+      <TableView fx:id="tableViewUserFriends" layoutX="194.0" prefHeight="292.0" prefWidth="407.0" stylesheets="@../style/tableViewStyle.css">
+        <columns>
+            <TableColumn fx:id="tableColumnFirstName" prefWidth="138.0" text="UserName" />
+            <TableColumn fx:id="tableColumnLastName" prefWidth="138.0" text="LastName" />
+            <TableColumn fx:id="tableColumnDate" prefWidth="138.0" text="Data" />
+        </columns>
+      </TableView>
+      <Button id="sale" fx:id="btnAddNewFriend" layoutX="29.0" layoutY="155.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="Adauga prieten" />
+      <Button id="sale" fx:id="btnfriendrequests" layoutX="29.0" layoutY="211.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="153.0" stylesheets="@../style/stylesheet.css" text="Cereri" />
+      <Button id="sale" fx:id="btnDelFriend" layoutX="485.0" layoutY="315.0" mnemonicParsing="false" onAction="#handleDeletePrietenieDto" stylesheets="@../style/stylesheet.css" text="Sterge prieten" />
+      <Button id="sale" fx:id="btnCreateEvent" layoutX="29.0" layoutY="270.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="CreateEvent" />
+      <Button id="sale" fx:id="btnAbonareEveniment" layoutX="29.0" layoutY="324.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="Abonare Eveniment" />
+      <Label layoutX="491.0" layoutY="391.0" textFill="WHITE" />
+      <TextField fx:id="txtSeconds" layoutX="441.0" layoutY="409.0" prefHeight="26.0" prefWidth="42.0" />
+      <Label layoutX="96.0" layoutY="414.0" text="Seteaza la cate secunde sa primesti notificari de la evenimente:" textFill="#f2f2f2" />
+   </children>
+</AnchorPane>

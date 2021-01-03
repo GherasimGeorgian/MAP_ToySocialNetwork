@@ -4,21 +4,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="639.0" prefWidth="667.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.UserPageController">
+<AnchorPane prefHeight="639.0" prefWidth="667.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.UserPageController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="147.0" style="-fx-background-color: #0D1824;">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="147.0" style="-fx-background-color: #271033;">
          <children>
-            <Button mnemonicParsing="false" onAction="#home" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="Home" textFill="WHITE" underline="true">
+            <Button mnemonicParsing="false" onAction="#home" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="Home" textFill="WHITE" underline="true">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#messages" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="Messages" textFill="WHITE">
+            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#messages" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="Admin" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="Friends" textFill="WHITE">
+            <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="Friends" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
@@ -28,7 +28,7 @@
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="LogOut" textFill="WHITE">
+            <Button layoutX="10.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="LogOut" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
@@ -36,6 +36,6 @@
             
          </children>
       </VBox>
-      <AnchorPane fx:id="acdinamic" layoutX="147.0" prefHeight="639.0" prefWidth="520.0" />
+      <AnchorPane fx:id="acdinamic" layoutX="147.0" prefHeight="639.0" prefWidth="520.0" style="-fx-background-color: #271033;" />
    </children>
 </AnchorPane>

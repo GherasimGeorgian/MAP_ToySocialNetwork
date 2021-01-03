@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -15,6 +16,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import socialnetwork.domain.Account;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.service.UserServiceFullDB;
 
@@ -27,9 +29,9 @@ public class LoginStartController {
     }
     //textfields
     @FXML
-    TextField textFieldFirstName;
+    TextField textFieldEmail;
     @FXML
-    TextField textFieldLastName;
+    PasswordField textFieldPassword;
 
 
     //buttons
@@ -38,6 +40,11 @@ public class LoginStartController {
 
     @FXML
     Button btnCancel;
+
+
+    @FXML
+    Button btnCreateNewAccount;
+
     //cava
     int ceva;
     @FXML
@@ -48,23 +55,23 @@ public class LoginStartController {
         btnLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(textFieldFirstName.getText().isEmpty() || textFieldLastName.getText().isEmpty()) {
+                if(textFieldEmail.getText().isEmpty() || textFieldPassword.getText().isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Warning");
                     alert.setHeaderText(null);
-                    alert.setContentText("Numele si prenumele nu trebuie sa fie nule!");
+                    alert.setContentText("Emailul si parola nu trebuie sa fie nule!");
                     alert.showAndWait();
                 }
                 else{
-                    user_app = loginUserbyLastFirstName(textFieldFirstName.getText(),textFieldLastName.getText());
+                    user_app = loginUserbyEmailAndPassword(textFieldEmail.getText(),textFieldPassword.getText());
                     if(user_app == null){
                         Alert alert = new Alert(Alert.AlertType.WARNING);
                         alert.setTitle("Warning");
                         alert.setHeaderText(null);
                         alert.setContentText("Userul introdus nu exista!");
                         alert.showAndWait();
-                        textFieldFirstName.clear();
-                        textFieldLastName.clear();
+                        textFieldEmail.clear();
+                        textFieldPassword.clear();
                     }
                     else{
                         try {
@@ -74,7 +81,7 @@ public class LoginStartController {
                             AnchorPane root=fxmlLoader.load();
 
                             UserPageController ctrl =fxmlLoader.getController();
-                            ctrl.setService(service);
+                            ctrl.setService(service,user_app);
 
                             Stage stagePageUser = new Stage();
                             Scene scene = new Scene(root, 1000, 500);
@@ -101,14 +108,44 @@ public class LoginStartController {
                 stage.close();
             }
         });
-    }
-    private Utilizator loginUserbyLastFirstName(String firstName,String lastName){
 
+
+        btnCreateNewAccount.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    fxmlLoader.setLocation(getClass().getResource("/views/create_account.fxml"));
+                    AnchorPane root=fxmlLoader.load();
+
+                    CreateAccountController ctrl =fxmlLoader.getController();
+                    ctrl.setService(service);
+
+                    Stage stageCreateAccount = new Stage();
+                    Scene scene = new Scene(root, 1000, 500);
+
+                    stageCreateAccount.setTitle("Create Account");
+                    stageCreateAccount.setScene(scene);
+                    stageCreateAccount.show();
+
+
+
+                }catch(Exception ex){
+                    System.out.println(ex);
+                }
+            }
+        });
+    }
+    private Utilizator loginUserbyEmailAndPassword(String email,String password){
+        Account accUser = null;
         try{
-            user_app = service.findByNumePrenume(firstName,lastName);
+            accUser = service.findByEmailAndPassword(email,password);
+            user_app = service.findOneUser(accUser.getId());
         }catch(Exception e){
             user_app = null;
         }
+
         return user_app;
     }
     public Utilizator getUtilizatorAplicatie(){

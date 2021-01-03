@@ -5,6 +5,10 @@ import socialnetwork.Algorithm.ElementGraph;
 import socialnetwork.Algorithm.Graph;
 import socialnetwork.domain.*;
 import socialnetwork.repository.RepositoryOptional;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.PageableImplementation;
+import socialnetwork.repository.paging.PagingRepository;
 import socialnetwork.utils.events.ChangeEventType;
 import socialnetwork.utils.events.ChangeEvent;
 
@@ -20,22 +24,38 @@ import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
 
 public class UserServiceFullDB implements Observable<ChangeEvent> {
-    private RepositoryOptional<Long, Utilizator> userDataBase;
-    private RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPrietenie;
-    private RepositoryOptional<Long, Message> messageRepo;
-    private RepositoryOptional<Long, Invite> inviteRepo;
-
-    public UserServiceFullDB(RepositoryOptional<Long,Utilizator> userDataBase,
-                             RepositoryOptional<Tuple<Long,Long>, Prietenie> repoPtr,
-                             RepositoryOptional<Long, Message> messageRepo,
-                             RepositoryOptional<Long, Invite> inviteRepo) {
+    private PagingRepository<Long, Utilizator> userDataBase;
+    private PagingRepository<Tuple<Long,Long>, Prietenie> repoPrietenie;
+    private PagingRepository<Long, Message> messageRepo;
+    private PagingRepository<Long, Invite> inviteRepo;
+    private PagingRepository<Long, Eveniment> eventRepo;
+    private PagingRepository<Long,Account> accountRepo;
+    private PagingRepository<Tuple<Long,Long>,AbonareEveniment> repoAbonareEvent;
+    public UserServiceFullDB(PagingRepository<Long,Utilizator> userDataBase,
+                             PagingRepository<Tuple<Long,Long>, Prietenie> repoPtr,
+                             PagingRepository<Long, Message> messageRepo,
+                             PagingRepository<Long, Invite> inviteRepo,
+                             PagingRepository<Long, Eveniment> evenimentRepo,
+                             PagingRepository<Long,Account> accRepo,
+                             PagingRepository<Tuple<Long,Long>,AbonareEveniment> repoAbonareEvent) {
         this.userDataBase = userDataBase;
         this.repoPrietenie = repoPtr;
         this.messageRepo = messageRepo;
         this.inviteRepo = inviteRepo;
+        this.eventRepo = evenimentRepo;
+        this.accountRepo = accRepo;
+        this.repoAbonareEvent = repoAbonareEvent;
         connectPrietenii();
     }
 
+    private int page = 0;
+    private int size = 1;
+
+    private Pageable pageable;
+
+    public void setPageSize(int size) {
+        this.size = size;
+    }
 
 
     private List<Observer<ChangeEvent>> observers=new ArrayList<>();
@@ -54,6 +74,24 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
     @Override
     public void notifyObservers(ChangeEvent t) {
         observers.stream().forEach(x->x.update(t));
+    }
+
+
+
+
+    public Set<Utilizator> getUsersOnPage(int page) {
+        this.page=page;
+        Pageable pageable = new PageableImplementation(page, this.size);
+        Page<Utilizator> usersPage = userDataBase.findAll(pageable);
+        return usersPage.getContent().collect(Collectors.toSet());
+    }
+    public Set<Utilizator> getNextUsers() {
+//        Pageable pageable = new PageableImplementation(this.page, this.size);
+//        Page<MessageTask> studentPage = repo.findAll(pageable);
+//        this.page++;
+//        return studentPage.getContent().collect(Collectors.toSet());
+        this.page++;
+        return getUsersOnPage(this.page);
     }
 
     public Utilizator addUtilizator(String firstName,String lastName) throws Exception{
@@ -785,5 +823,165 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
 
         return sortedList;
 
+    }
+
+    public Long createIdEvent(){
+        do{
+            boolean ok = true;
+            Long id = new Random().nextLong();
+            if(id< 0){
+                id *= -1;
+            }
+            for(Eveniment u : eventRepo.findAll()){
+                if(id == u.getId()){
+                    ok =false;
+                    break;
+                }
+            }
+            if(ok)
+                return id;
+        }while(true);
+    }
+    public Eveniment createEvent(String nameEvent, LocalDateTime date_event){
+        Eveniment event = new Eveniment(createIdEvent(),nameEvent,date_event);
+        if(eventRepo.save(event).isEmpty()){
+           return eventRepo.findOne(event.getId()).get();
+        }
+        return null;
+    }
+    public Iterable<Eveniment> getAllEvents(){
+        return eventRepo.findAll();
+    }
+    public Long createIdAccount(){
+        do{
+            boolean ok = true;
+            Long id = new Random().nextLong();
+            if(id< 0){
+                id *= -1;
+            }
+            for(Account u : accountRepo.findAll()){
+                if(id == u.getId()){
+                    ok =false;
+                    break;
+                }
+            }
+            if(ok)
+                return id;
+        }while(true);
+    }
+
+    public Account createAccount(String firstName, String lastName, String Email, String parola, String tipCont){
+        Utilizator user = findByNumePrenume(firstName,lastName);
+        Utilizator userCreated;
+        Account acc= null;
+        if(user != null){
+            //daca userul exista deja
+            return null;
+        }
+        else{
+            Long id_user = createIdAccount();
+
+             try{
+                 userCreated = addUtilizator(firstName, lastName);
+                 acc =new Account(userCreated.getId(),LocalDateTime.now(),Email,parola,tipCont);
+                 accountRepo.save(acc);
+
+            }catch(Exception ex){
+                return null;
+            }
+
+            return acc;
+        }
+
+    }
+
+
+    public Account findByEmailAndPassword(String email, String password){
+        for(Account u : accountRepo.findAll()){
+            if(u.getEmail().compareTo(email) == 0 && u.getParola().compareTo(password) == 0){
+                return u;
+            }
+        }
+        return null;
+    }
+
+
+    public Set<Eveniment> getEventsOnPage(int page) {
+        this.page=page;
+        Pageable pageable = new PageableImplementation(page, this.size);
+        Page<Eveniment> eventsPage = eventRepo.findAll(pageable);
+        return eventsPage.getContent().collect(Collectors.toSet());
+    }
+    public Set<Eveniment> getNextEvents() {
+        this.page++;
+        return getEventsOnPage(this.page);
+    }
+    public Iterable<AbonareEveniment> abonatiEvenimente(){
+        return repoAbonareEvent.findAll();
+    }
+    public Long createIdAbonare(){
+        do{
+            boolean ok = true;
+            Long id = new Random().nextLong();
+            if(id< 0){
+                id *= -1;
+            }
+            for(AbonareEveniment u : repoAbonareEvent.findAll()){
+                if(id == u.getIdAbonare()){
+                    ok =false;
+                    break;
+                }
+            }
+            if(ok)
+                return id;
+        }while(true);
+    }
+
+    public AbonareEveniment findAbonarebyEventAndUser(Eveniment event,Utilizator user){
+        for(AbonareEveniment u : repoAbonareEvent.findAll()){
+            if(u.getIdUtilizator().toString().compareTo(user.getId().toString()) == 0 && u.getIdEveniment().toString().compareTo(event.getId().toString()) == 0){
+                return u;
+            }
+        }
+        return null;
+    }
+    public AbonareEveniment abonareEveniment(Eveniment event,Utilizator user){
+        AbonareEveniment gasitAbonare = findAbonarebyEventAndUser(event,user);
+        if(gasitAbonare == null){
+            AbonareEveniment abonare = new AbonareEveniment(createIdAbonare(),user.getId(),event.getId(),LocalDateTime.now());
+            repoAbonareEvent.save(abonare);
+            return abonare;
+        }else
+        {
+            return null;
+        }
+    }
+    public List<Eveniment> evenimenteLaCareSuntAbonat(Utilizator user){
+
+        List<Long> listInt = StreamSupport.stream(repoAbonareEvent.findAll().spliterator(), false)
+                .filter(x->x.getIdUtilizator().toString().equals(user.getId().toString()))
+                .map(AbonareEveniment::getIdEveniment)
+                .collect(Collectors.toList());
+
+        List<Eveniment> events = new ArrayList<>();
+
+        for(Eveniment event : eventRepo.findAll()){
+            if(listInt.contains(event.getId())){
+                if(LocalDateTime.now().isBefore(event.getDataEvent())){
+                    events.add(event);
+                }
+            }
+        }
+        return events;
+    }
+    public AbonareEveniment dezabonareEveniment(Eveniment event,Utilizator user){
+        AbonareEveniment gasitAbonare = findAbonarebyEventAndUser(event,user);
+        if(gasitAbonare == null){
+            return null;
+        }else
+        {
+            repoAbonareEvent.delete(gasitAbonare.getId());
+            return gasitAbonare;
+        }
     }
 }

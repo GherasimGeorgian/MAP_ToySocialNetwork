@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.CreateEventController">
+   <children>
+      <Label fx:id="lblNameEvent" layoutX="20.0" layoutY="49.0" text="Numele evenimentului" textFill="WHITE" />
+      <Button id="sale" fx:id="btnCreateEvent" layoutX="59.0" layoutY="125.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Save event" />
+      <TextField id="sale" fx:id="txtNameEvent" layoutX="151.0" layoutY="32.0" prefHeight="69.0" prefWidth="312.0" stylesheets="@../style/stylesheet.css" />
+      <DatePicker id="sale" fx:id="datePickerEvent" layoutX="188.0" layoutY="125.0" stylesheets="@../style/stylesheet.css" />
+   </children>
+</AnchorPane>

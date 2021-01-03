@@ -4,6 +4,10 @@ import socialnetwork.domain.Entity;
 import socialnetwork.domain.validators.Validator;
 import socialnetwork.repository.Repository;
 import socialnetwork.repository.RepositoryOptional;
+import socialnetwork.repository.paging.Page;
+import socialnetwork.repository.paging.Pageable;
+import socialnetwork.repository.paging.Paginator;
+import socialnetwork.repository.paging.PagingRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class InMemoryRepositoryOptional<ID, E extends Entity<ID>> implements RepositoryOptional<ID,E> {
+public class InMemoryRepositoryOptional<ID, E extends Entity<ID>> implements PagingRepository<ID,E> {
 
     private Validator<E> validator;
     Map<ID,E> entities;
@@ -34,6 +38,11 @@ public class InMemoryRepositoryOptional<ID, E extends Entity<ID>> implements Rep
         Set<E> allEntities = entities.entrySet().stream().map((entry -> entry.getValue())).collect(Collectors.toSet());
         return allEntities;
 
+    }
+    @Override
+    public Page<E> findAll(Pageable pageable) {
+        Paginator<E> paginator = new Paginator<E>(pageable, this.findAll());
+        return paginator.paginate();
     }
 
     @Override

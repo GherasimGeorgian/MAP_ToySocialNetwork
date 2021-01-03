@@ -2,16 +2,10 @@ package socialnetwork;
 
 import socialnetwork.config.ApplicationContext;
 import socialnetwork.domain.*;
-import socialnetwork.domain.validators.InviteValidator;
-import socialnetwork.domain.validators.MessageValidator;
-import socialnetwork.domain.validators.PrietenieValidatorDb;
-import socialnetwork.domain.validators.UtilizatorValidator;
+import socialnetwork.domain.validators.*;
 import socialnetwork.repository.Repository;
 import socialnetwork.repository.RepositoryOptional;
-import socialnetwork.repository.database.InviteDB;
-import socialnetwork.repository.database.MessageDB;
-import socialnetwork.repository.database.PrietenieDB;
-import socialnetwork.repository.database.UtilizatorDB;
+import socialnetwork.repository.database.*;
 import socialnetwork.repository.file.PrietenieFile;
 import socialnetwork.service.UserServiceDB;
 import socialnetwork.service.UserServiceFullDB;
@@ -42,15 +36,19 @@ public class RunFromDataBase {
             RepositoryOptional<Long, Invite> inviteRepo =
                     new InviteDB(url,username, pasword,new InviteValidator(userDataBase));
 
+            RepositoryOptional<Long, Eveniment> evenimentRepo =
+                    new EventDB(url,username, pasword,new EvenimentValidator());
+
+            RepositoryOptional<Long, Account> accountRepo =
+                    new AccountDB(url,username, pasword,new AccountValidator());
+
+         //   UserServiceFullDB service3 = new UserServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo,evenimentRepo,accountRepo);
+
+           // SocialNetworkUIFullDB ui3 = new SocialNetworkUIFullDB();
+           // ui3.setService(service3);
 
 
-            UserServiceFullDB service3 = new UserServiceFullDB(userDataBase,prietenieDataBase,messageRepo,inviteRepo);
-
-            SocialNetworkUIFullDB ui3 = new SocialNetworkUIFullDB();
-            ui3.setService(service3);
-
-
-            ui3.showUI();
+            //ui3.showUI();
 
 
 

@@ -6,42 +6,18 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.LoginStartController">
     <children>
 
-        <SplitPane layoutX="172.0" layoutY="180.0" prefHeight="798.0" prefWidth="1251.0" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+        <SplitPane layoutX="172.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
 
-                <AnchorPane>
+                <AnchorPane id="rnd" style="-fx-background-color: #271033;">
                <children>
-                        <GridPane hgap="5.0" layoutX="34.0" layoutY="182.0" prefHeight="137.0" prefWidth="382.0" vgap="5.0">
-                            <children>
-                                <Label text="Nume" GridPane.rowIndex="1" />
-                                <Label text="Prenume:" GridPane.rowIndex="2" />
-                                <TextField fx:id="textFieldFirstName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <TextField fx:id="textFieldLastName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            </children>
-            
-                                  <children>
-                                <Button fx:id="btnLogin" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                    Login
-                                </Button>
-                            </children>
-            
-                                  <children>
-                                <Button fx:id="btnCancel" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                                    Cancel
-                                </Button>
-                            </children>
-                     <columnConstraints>
-                        <ColumnConstraints />
-                        <ColumnConstraints />
-                        <ColumnConstraints />
-                       </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                     </rowConstraints>
-                        </GridPane>
+                  <Button id="sale" fx:id="btnCreateNewAccount" layoutX="373.0" layoutY="277.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="159.0" stylesheets="@../style/stylesheet.css" text="Create new account" />
+                  <Label layoutX="39.0" layoutY="63.0" text="Email:" textFill="WHITE" />
+                  <Label layoutX="37.0" layoutY="97.0" text="Parola:" textFill="WHITE" />
+                  <PasswordField fx:id="textFieldPassword" layoutX="89.0" layoutY="93.0" stylesheets="@../style/stylesheet.css" />
+                  <TextField fx:id="textFieldEmail" layoutX="89.0" layoutY="59.0" prefHeight="26.0" prefWidth="149.0" stylesheets="@../style/stylesheet.css" />
+                  <Button id="sale" fx:id="btnLogin" layoutX="55.0" layoutY="174.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="68.0" stylesheets="@../style/stylesheet.css" text="Login" textOverrun="CLIP" />
+                  <Button id="sale" fx:id="btnCancel" layoutX="147.0" layoutY="174.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" stylesheets="@../style/stylesheet.css" text="Cancel" />
                </children>
                 </AnchorPane>
             </items>

@@ -1,5 +1,6 @@
 package socialnetwork.controller;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -9,7 +10,7 @@ public class MessageAlert {
         message.setHeaderText(header);
         message.setContentText(text);
         message.initOwner(owner);
-        message.showAndWait();
+        message.show();
     }
 
     static void showErrorMessage(Stage owner, String text){
@@ -17,6 +18,6 @@ public class MessageAlert {
         message.initOwner(owner);
         message.setTitle("Mesaj eroare");
         message.setContentText(text);
-        message.showAndWait();
+        message.show();
     }
 }
