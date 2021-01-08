@@ -86,10 +86,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         return usersPage.getContent().collect(Collectors.toSet());
     }
     public Set<Utilizator> getNextUsers() {
-//        Pageable pageable = new PageableImplementation(this.page, this.size);
-//        Page<MessageTask> studentPage = repo.findAll(pageable);
-//        this.page++;
-//        return studentPage.getContent().collect(Collectors.toSet());
+
         this.page++;
         return getUsersOnPage(this.page);
     }
@@ -105,7 +102,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         }
         else{
             userDataBase.save(utilizator_nou);
-            notifyObservers(new ChangeEvent(ChangeEventType.U_ADD, null));
+            notifyObservers(new ChangeEvent(ChangeEventType.U_ADD, utilizator_nou));
             return utilizator_nou;
         }
     }
@@ -165,7 +162,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
             }
             //repoPrietenie.changeEntities(map);
             this.connectPrietenii();
-            notifyObservers(new ChangeEvent(ChangeEventType.U_DEL, null));
+            notifyObservers(new ChangeEvent(ChangeEventType.U_DEL, gasit));
             return userDataBase.delete(gasit.getId()).get();
         }
     }
@@ -213,7 +210,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
             repoPrietenie.save(ptr);
         }
         this.connectPrietenii();
-        notifyObservers(new ChangeEvent(ChangeEventType.P_ADD, null));
+        notifyObservers(new ChangeEvent(ChangeEventType.P_ADD, ptr));
         return ptr;
     }
     public Prietenie stergePrietenie(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2) throws Exception{
@@ -238,7 +235,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         }
 
         this.connectPrietenii();
-        notifyObservers(new ChangeEvent(ChangeEventType.P_DEL, null));
+        notifyObservers(new ChangeEvent(ChangeEventType.P_DEL, ptr));
 
         return ptr;
     }
@@ -527,7 +524,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
             msg = new ReplyMessage(mesajBaza,mesajRaspuns.getId(),mesajRaspuns.getFrom(),mesajRaspuns.getTo(),mesajRaspuns.getMessage(),mesajRaspuns.getDate());
            }
         messageRepo.save(msg);
-        notifyObservers(new ChangeEvent(ChangeEventType.M_ADD, null));
+        notifyObservers(new ChangeEvent(ChangeEventType.M_ADD, msg));
         return msg;
     }
     public void trimiteInvitatie(String firstNameUser1,String lastNameUser1, String firstNameUser2,String lastNameUser2){
@@ -546,7 +543,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         if(prietenie1.isEmpty() && prietenie2.isEmpty()){
             Invite invitatie = new Invite(createIdInvite(),gasitUser1,gasitUser2, LocalDateTime.now(),InviteStatus.PENDING);
             inviteRepo.save(invitatie);
-            notifyObservers(new ChangeEvent(ChangeEventType.I_ADD, null));
+            notifyObservers(new ChangeEvent(ChangeEventType.I_ADD, invitatie));
         }
         else{
             throw new ServiceException("Cei 2 useri sunt deja prieteni!");
@@ -621,12 +618,13 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         Optional<Invite> invite =  inviteRepo.update(invitatie.get());
 
         //adaugare prietenii respective
+        Prietenie ptr_noua = null;
         if(invite.isPresent()){
-            Prietenie ptr_noua = new Prietenie(invite.get().getFromInvite().getId(),invite.get().getToInvite().getId(),LocalDateTime.now());
+            ptr_noua = new Prietenie(invite.get().getToInvite().getId(),invite.get().getFromInvite().getId(),LocalDateTime.now());
             repoPrietenie.save(ptr_noua);
             connectPrietenii();
         }
-        notifyObservers(new ChangeEvent(ChangeEventType.P_ADD, null));
+        notifyObservers(new ChangeEvent(ChangeEventType.P_ADD, ptr_noua));
 
     }
     public Invite stergeInvitatie(Long id) throws Exception{
@@ -636,7 +634,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         }
         Invite invite= inviteRepo.delete(new Long(id)).get();
 
-        notifyObservers(new ChangeEvent(ChangeEventType.I_DEL, null));
+        notifyObservers(new ChangeEvent(ChangeEventType.I_DEL, invite));
 
         return invite;
     }
@@ -662,14 +660,14 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         Utilizator resultUser;
         Predicate<Utilizator> byFirstName= x->x.getFirstName().equals(firstNameUser1);
         Predicate<Utilizator> byLastName= x->x.getLastName().equals(lastNameUser1);
-        List<Utilizator> unFriends = new ArrayList<>();
+            List<Utilizator> unFriends = new ArrayList<>();
         try {
              resultUser = StreamSupport.stream(userDataBase.findAll().spliterator(), false)
                     .filter(byFirstName)
                     .filter(byLastName)
                     .collect(toSingleton());
            for(Utilizator user :userDataBase.findAll()){
-               if(!resultUser.getFriends().contains(user)){
+               if(!resultUser.getFriends().contains(user) && (user.getFirstName() != firstNameUser1 && user.getLastName() != lastNameUser1 )){
                    unFriends.add(user);
                }
            }

@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 import socialnetwork.domain.Account;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.service.UserServiceFullDB;
+import socialnetwork.utils.password.PasswordHashing;
+import socialnetwork.utils.threads.NewThreadWindow;
 
 public class LoginStartController {
     private UserServiceFullDB service;
@@ -63,7 +65,7 @@ public class LoginStartController {
                     alert.showAndWait();
                 }
                 else{
-                    user_app = loginUserbyEmailAndPassword(textFieldEmail.getText(),textFieldPassword.getText());
+                    user_app = loginUserbyEmailAndPassword(textFieldEmail.getText(), PasswordHashing.doHashing(textFieldPassword.getText()));
                     if(user_app == null){
                         Alert alert = new Alert(Alert.AlertType.WARNING);
                         alert.setTitle("Warning");
@@ -74,28 +76,11 @@ public class LoginStartController {
                         textFieldPassword.clear();
                     }
                     else{
-                        try {
+                        NewThreadWindow th = new NewThreadWindow(service,user_app);
+                        th.execute();
 
-                            FXMLLoader fxmlLoader = new FXMLLoader();
-                            fxmlLoader.setLocation(getClass().getResource("/views/userpage.fxml"));
-                            AnchorPane root=fxmlLoader.load();
-
-                            UserPageController ctrl =fxmlLoader.getController();
-                            ctrl.setService(service,user_app);
-
-                            Stage stagePageUser = new Stage();
-                            Scene scene = new Scene(root, 1000, 500);
-
-                            stagePageUser.setTitle("UserPage");
-                            stagePageUser.setScene(scene);
-                            stagePageUser.show();
-                            Stage stage = (Stage) btnLogin.getScene().getWindow();
-                            stage.close();
-
-
-                        }catch(Exception ex){
-                            System.out.println(ex);
-                        }
+                        textFieldEmail.clear();
+                        textFieldPassword.clear();
                     }
                 }
             }

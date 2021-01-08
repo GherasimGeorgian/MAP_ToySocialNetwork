@@ -466,4 +466,7 @@ public class PrietenieController  implements Observer<ChangeEvent> {
     {
         lblLastName.setText(text);
     }
+
+
+
 }

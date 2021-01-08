@@ -3,6 +3,8 @@ package socialnetwork.controller;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import socialnetwork.domain.*;
+import socialnetwork.service.ServiceException;
 import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.utils.events.ChangeEvent;
 import socialnetwork.utils.events.ChangeEventType;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -38,7 +42,8 @@ public class PageController implements Observer<ChangeEvent> {
     private UserServiceFullDB service;
     private Utilizator user_app;
     private Page pageUser;
-
+    private  List<Utilizator> notFriends;
+    private Utilizator selected_user_add= null;
     //create abonamentele mele Window
     Stage stageAbonamenteleMele = new Stage();
     AbonamenteleMeleController abonamenteleMeleController;
@@ -112,7 +117,7 @@ public class PageController implements Observer<ChangeEvent> {
     @FXML
     Button btnAbonareEveniment;
 
-
+    Timeline timeline;
 
 
     //tableUsers
@@ -139,6 +144,37 @@ public class PageController implements Observer<ChangeEvent> {
 
     int secundeNotify = 15;
 
+    ObservableList<Invite> modelInvite = FXCollections.observableArrayList();
+
+    @FXML
+    TableView<Invite> tableViewInvite2;
+    @FXML
+    TableColumn<Invite, String> tableColumnFirstNameToRec2;
+
+    @FXML
+    TableColumn<Invite, String> tableColumnLastNameToRec2;
+
+
+
+    //textfields
+    @FXML
+    TextField textFieldSearchFriend;
+
+    //labels
+    @FXML
+    Label lblUser;
+
+
+    //buttons
+    @FXML
+    Button btnSendInvite;
+
+
+    @FXML
+    ListView listViewNotificari;
+
+    ObservableList<String> listViewnotificari = FXCollections.observableArrayList();
+
     public void setService(UserServiceFullDB Userservice,Utilizator userConn) {
         this.service=Userservice;
         this.user_app = userConn;
@@ -147,30 +183,39 @@ public class PageController implements Observer<ChangeEvent> {
         service.addObserver(this);
         setCurrentUser();
         setFriendsSelectedUser();
+        initModelFriendsRequests();
+        notFriends = service.notRelatiiUser(user_app.getFirstName(),user_app.getLastName());
         setlblFirstNameText(pageUser.getFirstName());
         setlblLastNameText(pageUser.getLastName());
-        eventsAlert();
+        AlertaNotificare();
+        eventsAlertStart();
 
     }
+    public void AlertaNotificare(){
+        List<Eveniment> evenimente = service.evenimenteLaCareSuntAbonat(user_app);
+        System.out.println(secundeNotify);
 
-    public void eventsAlert() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1*secundeNotify), ev -> {
-            List<Eveniment> evenimente = service.evenimenteLaCareSuntAbonat(user_app);
-            System.out.println(secundeNotify);
-
-            if(evenimente.size() > 0) {
-                String eventsString= new String();
-                for(Eveniment event : evenimente){
-                    eventsString += event.toString() + '\n';
-                }
-
-                MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Urmeaza niste evenimente importante!","Evenimente la care esti abonat si urmeaza: " + '\n' +eventsString);
-
+        if(evenimente.size() > 0) {
+            String eventsString= new String();
+            for(Eveniment event : evenimente){
+                eventsString += event.toString() + '\n';
             }
 
+            MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Urmeaza niste evenimente importante!","Evenimente la care esti abonat si urmeaza: " + '\n' +eventsString);
+
+        }
+    }
+
+
+    public void eventsAlertStart() {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1*secundeNotify), ev -> {
+            AlertaNotificare();
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+    public void eventsAlertStop(){
+        timeline.stop();
     }
 
     private void initModel() {
@@ -179,15 +224,97 @@ public class PageController implements Observer<ChangeEvent> {
     }
 
     @Override
-    public void update(ChangeEvent messageTaskChangeEvent) {
-        initModel();
+    public void update(ChangeEvent event) {
+
+        ChangeEventType t = event.getType();
+        if(t == ChangeEventType.I_ADD || t == ChangeEventType.I_DEL || t == ChangeEventType.I_UPD ||
+                t == ChangeEventType.P_ADD || t == ChangeEventType.P_DEL || t == ChangeEventType.P_UPD) {
+            initModel();
+            initModelFriendsRequests();
+            notFriends = service.notRelatiiUser(user_app.getFirstName(),user_app.getLastName());
+        }
+        if(t == ChangeEventType.P_ADD){
+            Prietenie prietenie = (Prietenie)event.getData();
+            if(prietenie.getId().getRight().toString().equals(user_app.getId().toString())){
+                listViewNotificari.getItems().add(new String("Cineva te-a adaugat la prieteni!"));
+            }
+        }
+        if(t == ChangeEventType.M_ADD){
+            Message msg = (Message)event.getData();
+            if(msg.getTo().contains(user_app)){
+                listViewNotificari.getItems().add(new String("Ai primit un mesaj de la " + msg.getFrom().getFirstName() + " " + msg.getFrom().getLastName() + "!"));
+            }
+        }
     }
+
+    private void initModelFriendsRequests() {
+        Iterable<Invite> invites = service.allinvitationsToUsers(user_app.getFirstName(),user_app.getLastName());
+        List<Invite> invitesList = StreamSupport.stream(invites.spliterator(),false)
+                .collect(Collectors.toList());
+        modelInvite.setAll(invitesList);
+    }
+
+
 
 
     @FXML
     public void initialize() {
 
-       txtSeconds.setOnKeyPressed(new EventHandler<KeyEvent>()
+
+        textFieldSearchFriend.textProperty().addListener(x->handleFilterFriends());
+
+
+        btnSendInvite.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(selected_user_add != null) {
+                    //verificam daca exista deja o invitatie
+                    Invite inv = service.findInvitebytwoUsers(user_app.getFirstName(), user_app.getLastName(),selected_user_add.getFirstName(),selected_user_add.getLastName());
+                    if (inv!= null && inv.getStatus() != InviteStatus.APPROVED) {
+                        setlblUser("");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Atentie");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Exista deja o invitatie catre userul: " + selected_user_add.getFirstName() + " " + selected_user_add.getLastName());
+                        alert.showAndWait();
+
+                    }
+                    // altfel cream o noua invitatie
+                    else{
+                        try {
+                            service.trimiteInvitatie(user_app.getFirstName(), user_app.getLastName(), selected_user_add.getFirstName(), selected_user_add.getLastName());
+                            setlblUser("");
+                        }catch (ServiceException ex){
+                            setlblUser("");
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Atentie");
+                            alert.setHeaderText(null);
+                            alert.setContentText(ex.getMessage());
+                            alert.showAndWait();
+
+                        }
+                    }
+                }
+                else{
+                    setlblUser("");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Atentie");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Nu s-a ales un user caruia sa i se trimita invitatia!");
+                    alert.showAndWait();
+                }
+            }
+        });
+        //
+
+        tableViewInvite2.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        tableColumnFirstNameToRec2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFromInvite().getFirstName()));
+        tableColumnLastNameToRec2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFromInvite().getLastName()));
+        tableViewInvite2.setItems(modelInvite);
+
+
+        txtSeconds.setOnKeyPressed(new EventHandler<KeyEvent>()
         {
             @Override
             public void handle(KeyEvent ke)
@@ -198,6 +325,19 @@ public class PageController implements Observer<ChangeEvent> {
 
                         try{
                             secundeNotify = Integer.parseInt(txtSeconds.getText());
+                            if(secundeNotify == -1){
+                                timeline.stop();
+
+                            if(secundeNotify > 10) {
+                                eventsAlertStop();
+                                eventsAlertStart();
+                            }
+                            else
+                            {
+                                MessageAlert.showErrorMessage(null,"Seteaza mai mult de 10 secunde pentru notificari");
+                            }
+                                MessageAlert.showErrorMessage(null,"Ai oprit notificarile");
+                            }
                         }catch(Exception ex){
                             MessageAlert.showErrorMessage(null,"Ai introdus ceva gresit");
                         }
@@ -209,6 +349,8 @@ public class PageController implements Observer<ChangeEvent> {
                 }
             }
         });
+
+
 
         for(int i=0;i<5;i++){
             Stage newStage = new Stage();
@@ -531,6 +673,29 @@ public class PageController implements Observer<ChangeEvent> {
             alert.showAndWait();
         }
     }
+    private void handleFilterFriends() {
+
+        Predicate<Utilizator> numePredicate = x->x.getLastName().startsWith(textFieldSearchFriend.getText());
+
+        try {
+            Utilizator user_gasit = StreamSupport.stream(notFriends.spliterator(), false)
+                    .filter(numePredicate)
+                    .collect(Collectors.toList()).get(0);
+            setlblUser(user_gasit.getFirstName() + " " + user_gasit.getLastName());
+            selected_user_add = user_gasit;
+        }catch(Exception ex){
+            setlblUser("Nimic gasit");
+        }
+//        modelGrade.setAll(getNotaDTOList()
+//                .stream()
+//                .filter(numePredicate.and(temaPredicate).and(notaPredicate))
+//                .collect(Collectors.toList())
+//        );
+    }
+    private void setlblUser(String text)
+    {
+        lblUser.setText(text);
+    }
 
     private void setlblFirstNameText(String text)
     {
@@ -540,5 +705,33 @@ public class PageController implements Observer<ChangeEvent> {
     private void setlblLastNameText(String text)
     {
         lblLastName.setText(text);
+    }
+
+    public void handleAcceptInvite(ActionEvent actionEvent) {
+        Invite selected = tableViewInvite2.getSelectionModel().getSelectedItem();
+        if(selected != null) {
+            if(selected.getStatus() == InviteStatus.PENDING) {
+                try {
+                    service.acceptaInvitatie(selected.getId());
+                } catch (Exception e) {
+
+                }
+
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Atentie");
+                alert.setHeaderText(null);
+                alert.setContentText("Invitatia trebuie sa fie Pending!");
+                alert.showAndWait();
+            }
+        }
+        else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Atentie");
+            alert.setHeaderText(null);
+            alert.setContentText("Nu ai selectat nimic!");
+            alert.showAndWait();
+        }
     }
 }

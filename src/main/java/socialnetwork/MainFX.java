@@ -16,12 +16,21 @@ import socialnetwork.repository.database.*;
 import socialnetwork.repository.paging.PagingRepository;
 import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.ui.SocialNetworkUIFullDB;
+import socialnetwork.utils.password.PasswordHashing;
 
 public class MainFX extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
 
+        System.out.println(PasswordHashing.doHashing("ian"));
+        System.out.println(PasswordHashing.doHashing("rusu"));
+        System.out.println(PasswordHashing.doHashing("mihai"));
+        System.out.println(PasswordHashing.doHashing("sergiu"));
+        System.out.println(PasswordHashing.doHashing("cretu"));
+        System.out.println(PasswordHashing.doHashing("vasilem"));
+        System.out.println(PasswordHashing.doHashing("ungurum"));
+        System.out.println(PasswordHashing.doHashing("ocult"));
         System.out.println("Reading data from database");
         final String url = ApplicationContext.getPROPERTIES().getProperty("database.socialnetwork.url");
         final String username= ApplicationContext.getPROPERTIES().getProperty("databse.socialnetwork.username");

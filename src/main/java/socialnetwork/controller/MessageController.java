@@ -21,12 +21,15 @@ import socialnetwork.domain.ReplyMessage;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.service.ServiceException;
 import socialnetwork.service.UserServiceFullDB;
+import socialnetwork.utils.events.ChangeEvent;
+import socialnetwork.utils.events.ChangeEventType;
+import socialnetwork.utils.observer.Observer;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageController {
+public class MessageController implements Observer<ChangeEvent> {
     private UserServiceFullDB service;
     private Utilizator user_app=null;
     private Utilizator user_comunicate=null;
@@ -52,6 +55,7 @@ public class MessageController {
         this.service=service;
         this.user_app = userApp;
         this.user_comunicate = user_com;
+        service.addObserver(this);
         useriSimpleImmutable.add(new AbstractMap.SimpleImmutableEntry<>(user_comunicate.getFirstName(), user_comunicate.getLastName()));
         cv = new ConversationView(user_comunicate.getFirstName() + " " + user_comunicate.getLastName(),user_app.getFirstName() + " " + user_app.getLastName(),sendMessageButton,replyMessage,userInput);
         vBox.getChildren().add(cv);
@@ -71,6 +75,24 @@ public class MessageController {
         initModelMultipleUsers();
         loadMultipleMessages();
 
+    }
+
+    @Override
+    public void update(ChangeEvent event) {
+        ChangeEventType t = event.getType();
+        //daca se modifica un mesaj
+        if(t == ChangeEventType.M_ADD) {
+             Message msg = (Message)event.getData();
+             if(msg.getTo().contains(user_app)){
+                 if(msg instanceof ReplyMessage) {
+                     ReplyMessage rplmsg = (ReplyMessage)msg;
+                     cv.receiveMessage(rplmsg.toString(),rplmsg.getId());
+                 }
+                 else{
+                     cv.receiveMessage(msg.getMessage(),msg.getId());
+                 }
+             }
+        }
     }
 
     @FXML
@@ -169,6 +191,7 @@ public class MessageController {
             if(!userInput.getText().trim().isEmpty()) {
                 ReplyMessage msg = (ReplyMessage) service.trimiteMesaj(user_app.getFirstName(), user_app.getLastName(),useriSimpleImmutable,userInput.getText(),selectedMessage.getIdMessage());
                 cv.sendMessage(msg.toString(),msg.getId());
+                userInput.setText("");
             }
             else{
                 selectedMessage = null;

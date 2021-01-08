@@ -4,11 +4,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import socialnetwork.domain.Account;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.service.UserServiceFullDB;
+import socialnetwork.utils.password.PasswordHashing;
 
+import javax.swing.text.html.ImageView;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 
 public class CreateAccountController {
@@ -42,8 +48,14 @@ public class CreateAccountController {
     @FXML
     CheckBox checkBoxCondition;
 
+
+
+
+
+
     @FXML
     public void initialize() {
+
         btnCancel.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -60,7 +72,7 @@ public class CreateAccountController {
                 && !txtParola.getText().isEmpty() && !txtConfirmParola.getText().isEmpty() && checkBoxCondition.isSelected())
                 {
                     if(txtParola.getText().equals(txtConfirmParola.getText())) {
-                        Account accRez = service.createAccount(txtNume.getText(),txtPrenume.getText(),txtEmail.getText(),txtParola.getText(),"NORMAL");
+                        Account accRez = service.createAccount(txtNume.getText(),txtPrenume.getText(),txtEmail.getText(), PasswordHashing.doHashing(txtParola.getText()),"NORMAL");
 
                         if (accRez == null) {
                             MessageAlert.showErrorMessage(null,"Contul exista deja!");
