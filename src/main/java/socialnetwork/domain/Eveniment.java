@@ -1,5 +1,7 @@
 package socialnetwork.domain;
 
+import socialnetwork.utils.localdatetimeformat.FormatLDT;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -21,6 +23,10 @@ public class Eveniment extends Entity<Long> {
 
     public LocalDateTime getDataEvent() {
         return dataEvent;
+    }
+
+    public String getDataString() {
+        return FormatLDT.convert(dataEvent);
     }
 
     @Override

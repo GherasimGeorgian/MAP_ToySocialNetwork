@@ -784,7 +784,7 @@ false YEKT
 false Z
 false Zulu
 </TimeZones>
-      <StartupTime>1609522275</StartupTime>
+      <StartupTime>1610211067</StartupTime>
     </root>
     <database id="2" parent="1" name="postgres">
       <ObjectId>13442</ObjectId>
@@ -794,7 +794,7 @@ false Zulu
     <database id="3" parent="1" name="socialnetwork">
       <ObjectId>16420</ObjectId>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>856</IntrospectionStateNumber>
+      <IntrospectionStateNumber>1127</IntrospectionStateNumber>
       <Current>1</Current>
       <Relations>sequence|table|16425|16422|1
 sequence|table|16439|16441|1
@@ -854,7 +854,7 @@ sequence|table|16457|16459|1
       <Comment>standard public schema</Comment>
       <StateNumber>287</StateNumber>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>857</IntrospectionStateNumber>
+      <IntrospectionStateNumber>1128</IntrospectionStateNumber>
       <Current>1</Current>
     </schema>
     <access-method id="17" parent="3" name="heap">
@@ -950,7 +950,7 @@ sequence|table|16457|16459|1
     <table id="33" parent="16" name="account">
       <ObjectId>16483</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>853</StateNumber>
+      <StateNumber>1126</StateNumber>
     </table>
     <table id="34" parent="16" name="eveniment">
       <ObjectId>16468</ObjectId>
@@ -1060,68 +1060,74 @@ sequence|table|16457|16459|1
       <StateNumber>853</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <index id="51" parent="33" name="account_id_utilizator_uindex">
+    <column id="51" parent="33" name="photo_url">
+      <Position>6</Position>
+      <DataType>varchar|0s</DataType>
+      <StateNumber>1126</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <index id="52" parent="33" name="account_id_utilizator_uindex">
       <ObjectId>16489</ObjectId>
       <StateNumber>854</StateNumber>
       <ColNames>id_utilizator</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="52" parent="33" name="account_pk">
+    <index id="53" parent="33" name="account_pk">
       <ObjectId>16490</ObjectId>
       <StateNumber>855</StateNumber>
       <ColNames>id_utilizator</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
     </index>
-    <key id="53" parent="33" name="account_pk">
+    <key id="54" parent="33" name="account_pk">
       <ObjectId>16491</ObjectId>
       <StateNumber>855</StateNumber>
       <ColNames>id_utilizator</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>account_pk</UnderlyingIndexName>
     </key>
-    <column id="54" parent="34" name="idevent">
+    <column id="55" parent="34" name="idevent">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>840</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="55" parent="34" name="event_name">
+    <column id="56" parent="34" name="event_name">
       <Position>2</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>840</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="56" parent="34" name="date_event">
+    <column id="57" parent="34" name="date_event">
       <Position>3</Position>
       <DataType>timestamp|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>840</StateNumber>
       <TypeId>1114</TypeId>
     </column>
-    <index id="57" parent="34" name="eveniment_idevent_uindex">
+    <index id="58" parent="34" name="eveniment_idevent_uindex">
       <ObjectId>16474</ObjectId>
       <StateNumber>841</StateNumber>
       <ColNames>idevent</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="58" parent="34" name="eveniment_pk">
+    <index id="59" parent="34" name="eveniment_pk">
       <ObjectId>16475</ObjectId>
       <StateNumber>842</StateNumber>
       <ColNames>idevent</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
     </index>
-    <key id="59" parent="34" name="eveniment_pk">
+    <key id="60" parent="34" name="eveniment_pk">
       <ObjectId>16476</ObjectId>
       <StateNumber>842</StateNumber>
       <ColNames>idevent</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>eveniment_pk</UnderlyingIndexName>
     </key>
-    <column id="60" parent="35" name="id">
+    <column id="61" parent="35" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1129,49 +1135,49 @@ sequence|table|16457|16459|1
       <DefaultExpression>nextval(&apos;invitations_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="61" parent="35" name="frominvite">
+    <column id="62" parent="35" name="frominvite">
       <Position>2</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>665</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="62" parent="35" name="toinvite">
+    <column id="63" parent="35" name="toinvite">
       <Position>3</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>666</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="63" parent="35" name="date_invite">
+    <column id="64" parent="35" name="date_invite">
       <Position>4</Position>
       <DataType>timestamp|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>659</StateNumber>
       <TypeId>1114</TypeId>
     </column>
-    <column id="64" parent="35" name="status">
+    <column id="65" parent="35" name="status">
       <Position>5</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>659</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <index id="65" parent="35" name="invitations_pk">
+    <index id="66" parent="35" name="invitations_pk">
       <ObjectId>16466</ObjectId>
       <StateNumber>659</StateNumber>
       <ColNames>id</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
     </index>
-    <key id="66" parent="35" name="invitations_pk">
+    <key id="67" parent="35" name="invitations_pk">
       <ObjectId>16467</ObjectId>
       <StateNumber>659</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>invitations_pk</UnderlyingIndexName>
     </key>
-    <column id="67" parent="36" name="id">
+    <column id="68" parent="36" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1179,76 +1185,76 @@ sequence|table|16457|16459|1
       <DefaultExpression>nextval(&apos;message_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="68" parent="36" name="from_user">
+    <column id="69" parent="36" name="from_user">
       <Position>2</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>652</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="69" parent="36" name="to_user">
+    <column id="70" parent="36" name="to_user">
       <Position>3</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>653</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="70" parent="36" name="message">
+    <column id="71" parent="36" name="message">
       <Position>4</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>629</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="71" parent="36" name="date">
+    <column id="72" parent="36" name="date">
       <Position>5</Position>
       <DataType>timestamp|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>646</StateNumber>
       <TypeId>1114</TypeId>
     </column>
-    <column id="72" parent="36" name="reply">
+    <column id="73" parent="36" name="reply">
       <Position>6</Position>
       <DataType>bigint|0s</DataType>
       <StateNumber>636</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <index id="73" parent="36" name="message_pk">
+    <index id="74" parent="36" name="message_pk">
       <ObjectId>16448</ObjectId>
       <StateNumber>646</StateNumber>
       <ColNames>id</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
     </index>
-    <key id="74" parent="36" name="message_pk">
+    <key id="75" parent="36" name="message_pk">
       <ObjectId>16449</ObjectId>
       <StateNumber>629</StateNumber>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>message_pk</UnderlyingIndexName>
     </key>
-    <column id="75" parent="37" name="id_left">
+    <column id="76" parent="37" name="id_left">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>593</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="76" parent="37" name="id_right">
+    <column id="77" parent="37" name="id_right">
       <Position>2</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>593</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="77" parent="37" name="data_prietenie">
+    <column id="78" parent="37" name="data_prietenie">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>593</StateNumber>
       <TypeId>1082</TypeId>
     </column>
-    <column id="78" parent="38" name="id">
+    <column id="79" parent="38" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
@@ -1256,28 +1262,28 @@ sequence|table|16457|16459|1
       <DefaultExpression>nextval(&apos;users_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>20</TypeId>
     </column>
-    <column id="79" parent="38" name="firstname">
+    <column id="80" parent="38" name="firstname">
       <Position>2</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>524</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="80" parent="38" name="lastname">
+    <column id="81" parent="38" name="lastname">
       <Position>3</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>525</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <index id="81" parent="38" name="users_pk">
+    <index id="82" parent="38" name="users_pk">
       <ObjectId>16434</ObjectId>
       <StateNumber>526</StateNumber>
       <ColNames>id</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
     </index>
-    <key id="82" parent="38" name="users_pk">
+    <key id="83" parent="38" name="users_pk">
       <ObjectId>16435</ObjectId>
       <StateNumber>526</StateNumber>
       <ColNames>id</ColNames>

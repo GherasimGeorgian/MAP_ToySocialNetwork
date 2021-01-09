@@ -26,6 +26,7 @@ public class Page {
     }
     public void actualizarePrietenii(){
         this.prieteni = service.relatiiUser(user.getFirstName(),user.getLastName());
+        //this.prieteni = service.relatiiUserPageable(user,service.getCurrentPageRelatii(page));
     }
 
     public String getFirstName() {

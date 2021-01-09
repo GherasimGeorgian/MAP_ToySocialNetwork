@@ -46,6 +46,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         this.accountRepo = accRepo;
         this.repoAbonareEvent = repoAbonareEvent;
         connectPrietenii();
+
     }
 
     private int page = 0;
@@ -189,6 +190,13 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         return userDataBase.findOne(id).get();
     }
 
+    public Invite findOneInvite(long id){
+        return inviteRepo.findOne(id).get();
+    }
+    public Eveniment findOneEvent(long id){
+        return eventRepo.findOne(id).get();
+    }
+
     public Iterable<Prietenie> getAllFriends(){
         return repoPrietenie.findAll();
     }
@@ -235,7 +243,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         }
 
         this.connectPrietenii();
-        notifyObservers(new ChangeEvent(ChangeEventType.P_DEL, ptr));
+        notifyObservers(new ChangeEvent(ChangeEventType.P_DEL, ptr,gasitUser1));
 
         return ptr;
     }
@@ -638,6 +646,16 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
 
         return invite;
     }
+    public Invite rejectInvite(Invite invite) throws Exception{
+        if(invite == null){
+            throw new Exception("Invitatia nu exista!");
+        }
+        invite.setStatus(InviteStatus.REJECTED);
+
+        Invite inviteRez = inviteRepo.update(invite).get();
+        notifyObservers(new ChangeEvent(ChangeEventType.I_UPD, invite));
+        return inviteRez;
+    }
 
     /**
      *
@@ -701,7 +719,8 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
 
         for(Invite u : inviteRepo.findAll()){
             if(gasitUser1.getId().toString().equals(u.getFromInvite().getId().toString()) &&
-                    gasitUser2.getId().toString().equals(u.getToInvite().getId().toString())){
+                    gasitUser2.getId().toString().equals(u.getToInvite().getId().toString()) &&
+            u.getStatus() ==InviteStatus.PENDING){
                 return u;
             }
         }
@@ -843,6 +862,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
     public Eveniment createEvent(String nameEvent, LocalDateTime date_event){
         Eveniment event = new Eveniment(createIdEvent(),nameEvent,date_event);
         if(eventRepo.save(event).isEmpty()){
+            notifyObservers(new ChangeEvent(ChangeEventType.E_ADD, event));
            return eventRepo.findOne(event.getId()).get();
         }
         return null;
@@ -881,7 +901,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
 
              try{
                  userCreated = addUtilizator(firstName, lastName);
-                 acc =new Account(userCreated.getId(),LocalDateTime.now(),Email,parola,tipCont);
+                 acc =new Account(userCreated.getId(),LocalDateTime.now(),Email,parola,tipCont,"null");
                  accountRepo.save(acc);
 
             }catch(Exception ex){
@@ -902,13 +922,34 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         }
         return null;
     }
+    public Account findAccountByUserName(Utilizator user){
+        for(Account u : accountRepo.findAll()){
+            if(u.getId().toString().equals(user.getId().toString())){
+                return u;
+            }
+        }
+        return null;
+    }
+    public Account getAccountByUserId(Long id){
+        for(Account u : accountRepo.findAll()){
+            if(u.getId().toString().equals(id.toString())){
+                return u;
+            }
+        }
+        return null;
+    }
 
+    public void updateAccount(Account account){
+        accountRepo.update(account);
+    }
 
     public Set<Eveniment> getEventsOnPage(int page) {
         this.page=page;
-        Pageable pageable = new PageableImplementation(page, this.size);
+        Pageable pageable = new PageableImplementation(page, 2);
         Page<Eveniment> eventsPage = eventRepo.findAll(pageable);
+
         return eventsPage.getContent().collect(Collectors.toSet());
+
     }
     public Set<Eveniment> getNextEvents() {
         this.page++;
@@ -948,6 +989,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         if(gasitAbonare == null){
             AbonareEveniment abonare = new AbonareEveniment(createIdAbonare(),user.getId(),event.getId(),LocalDateTime.now());
             repoAbonareEvent.save(abonare);
+            notifyObservers(new ChangeEvent(ChangeEventType.AE_ADD, gasitAbonare));
             return abonare;
         }else
         {
@@ -979,7 +1021,14 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
         }else
         {
             repoAbonareEvent.delete(gasitAbonare.getId());
+            notifyObservers(new ChangeEvent(ChangeEventType.AE_DEL, gasitAbonare));
             return gasitAbonare;
         }
     }
+
+
+
+
+
+
 }

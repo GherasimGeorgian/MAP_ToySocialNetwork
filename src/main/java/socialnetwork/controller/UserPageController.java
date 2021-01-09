@@ -106,14 +106,13 @@ public class UserPageController {
 
         try{
 
-            Stage stageLogin = new Stage();
+            Stage stageMessages = new Stage();
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/views/reports.fxml"));
+            loader.setLocation(getClass().getResource("/views/page.fxml"));
             AnchorPane root = loader.load();
 
-            RaportController ctrl = loader.getController();
-            ctrl.setService(service);
-
+            PageController ctrl=loader.getController();
+            ctrl.setService(service,user_app);
 
             acdinamic.getChildren().setAll(root);
         }catch (IOException ex){

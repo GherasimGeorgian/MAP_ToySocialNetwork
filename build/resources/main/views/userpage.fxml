@@ -18,17 +18,32 @@
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="Friends" textFill="WHITE">
+            <Button layoutX="10.0" layoutY="144.0" mnemonicParsing="false" onAction="#reports" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="Rapoarte" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="144.0" mnemonicParsing="false" onAction="#reports" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="Rapoarte" textFill="WHITE">
+            <Button layoutX="10.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="LogOut" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="LogOut" textFill="WHITE">
+            <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" textFill="WHITE">
+               <font>
+                  <Font name="Rockwell" size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="279.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" textFill="WHITE">
+               <font>
+                  <Font name="Rockwell" size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="346.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" textFill="WHITE">
+               <font>
+                  <Font name="Rockwell" size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="413.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
@@ -36,6 +51,6 @@
             
          </children>
       </VBox>
-      <AnchorPane fx:id="acdinamic" layoutX="147.0" prefHeight="639.0" prefWidth="520.0" style="-fx-background-color: #271033;" />
+      <AnchorPane fx:id="acdinamic" layoutX="147.0" prefHeight="639.0" prefWidth="1102.0" style="-fx-background-color: #271033;" />
    </children>
 </AnchorPane>

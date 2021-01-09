@@ -7,7 +7,7 @@
    <children>
       <Button id="sale" fx:id="btnAbonare" layoutX="20.0" layoutY="107.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Abonare" />
       <Button id="sale" fx:id="btnDezabonare" layoutX="20.0" layoutY="170.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Dezabonare" />
-      <TableView fx:id="tableViewEvenimente" layoutX="206.0" layoutY="57.0" prefHeight="268.0" prefWidth="374.0" stylesheets="@../style/tableViewStyle.css">
+      <TableView fx:id="tableViewEvenimente" layoutX="206.0" layoutY="57.0" prefHeight="268.0" prefWidth="374.0" stylesheets="@../style/styletable3.css">
         <columns>
             <TableColumn fx:id="tableColumnEventName" prefWidth="138.0" text="NumeEvent" />
             <TableColumn fx:id="tableColumnDateEvent" prefWidth="138.0" text="DataEvent" />

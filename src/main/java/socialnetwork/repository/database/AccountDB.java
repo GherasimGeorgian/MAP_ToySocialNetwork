@@ -1,7 +1,9 @@
 package socialnetwork.repository.database;
 
 import socialnetwork.domain.Account;
-import socialnetwork.domain.Eveniment;import socialnetwork.domain.validators.Validator;
+import socialnetwork.domain.Eveniment;
+import socialnetwork.domain.InviteStatus;
+import socialnetwork.domain.validators.Validator;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,10 +28,10 @@ public class AccountDB  extends AbstractDbRepository<Long, Account>{
             String email = rs.getString("email");
             String parola = rs.getString("parola");
             String typeACC = rs.getString("type_account");
+            String url_photo = rs.getString("photo_url");
 
 
-
-            account = new Account(idutilizator,ldt,email,parola,typeACC);
+            account = new Account(idutilizator,ldt,email,parola,typeACC,url_photo);
 
 
         } catch (
@@ -44,7 +46,7 @@ public class AccountDB  extends AbstractDbRepository<Long, Account>{
     }
     @Override
     public String abstractInsert(){
-        return new String("INSERT INTO account(id_utilizator,date_create_account,email,parola,type_account) values(?,?,?,?,?)");
+        return new String("INSERT INTO account(id_utilizator,date_create_account,email,parola,type_account,photo_url) values(?,?,?,?,?,?)");
     }
     @Override
     public void abstractInsertParameters(PreparedStatement stmt, Account account){
@@ -54,6 +56,7 @@ public class AccountDB  extends AbstractDbRepository<Long, Account>{
             stmt.setString(3,account.getEmail());
             stmt.setString(4,account.getParola());
             stmt.setString(5,account.getTipCont());
+            stmt.setString(6,account.getUrl_photo());
         } catch (
                 SQLException e) {
             e.printStackTrace();
@@ -68,10 +71,26 @@ public class AccountDB  extends AbstractDbRepository<Long, Account>{
 
     @Override
     public String abstractUpdate(){
-        //TODO
-        return new String("");
+        return new String("UPDATE account SET id_utilizator = ?," +
+                "date_create_account = ?," +
+                "email = ?," +
+                "parola = ?," +
+                "type_account= ?," +
+                "photo_url= ?" +
+                " WHERE id_utilizator = ?");
     }
     public void abstractUpdateParameters(PreparedStatement stmt,Account entity){
-        //TODO
+        try{
+            stmt.setLong(1, entity.getId());
+            stmt.setTimestamp(2,Timestamp.valueOf(entity.getData_creeare_cont()));
+            stmt.setString(3, entity.getEmail());
+            stmt.setString(4, entity.getParola());
+            stmt.setString(5, entity.getTipCont());
+            stmt.setString(6, entity.getUrl_photo());
+            stmt.setLong(7,entity.getId());
+        } catch (
+                SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

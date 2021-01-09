@@ -37,7 +37,7 @@ public class NewThreadWindow {
                     ctrl.setService(service, user_app);
 
                     Stage stagePageUser = new Stage();
-                    Scene scene = new Scene(root, 1000, 500);
+                    Scene scene = new Scene(root, 1271, 562);
 
                     stagePageUser.setTitle("UserPage");
                     stagePageUser.setScene(scene);

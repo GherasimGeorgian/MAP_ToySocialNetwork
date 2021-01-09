@@ -9,13 +9,22 @@ public class Account extends Entity<Long>{
     private String parola;
     private String Email;
     private String tipCont;
-    public Account(Long idUser, LocalDateTime data_cont, String email, String parola, String type){
+    private String url_photo;
+    public Account(Long idUser, LocalDateTime data_cont, String email, String parola, String type,String url_photo){
         this.setId(idUser);
         this.id_utilizator= idUser;
         this.data_creeare_cont = data_cont;
         this.parola = parola;
         this.Email = email;
         this.tipCont = type;
+        this.url_photo = url_photo;
+    }
+    public String getUrl_photo(){
+        return url_photo;
+    }
+
+    public void setUrl_photo(String new_url){
+        this.url_photo = new_url;
     }
 
     public Long getId_utilizator() {

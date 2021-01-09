@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import socialnetwork.domain.AbonareEveniment;
+import socialnetwork.domain.Eveniment;
 import socialnetwork.domain.Utilizator;
 import socialnetwork.service.UserServiceFullDB;
 
@@ -43,7 +45,8 @@ public class CreateEventController {
             @Override
             public void handle(ActionEvent event) {
                 if(datePickerEvent.getValue() != null) {
-                    service.createEvent(txtNameEvent.getText(), datePickerEvent.getValue().atStartOfDay());
+                    Eveniment eventul = service.createEvent(txtNameEvent.getText(), datePickerEvent.getValue().atStartOfDay());
+                    AbonareEveniment abonare =  service.abonareEveniment(eventul,user_app);
                     MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Nice", "Evenimentul a fost salvat cu succes!!!");
                 }
                 else{
