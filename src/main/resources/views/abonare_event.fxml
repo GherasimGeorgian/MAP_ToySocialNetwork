@@ -3,17 +3,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.AbonareEventController">
+<AnchorPane prefHeight="311.0" prefWidth="586.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.AbonareEventController">
    <children>
-      <Button id="sale" fx:id="btnAbonare" layoutX="20.0" layoutY="107.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Abonare" />
-      <Button id="sale" fx:id="btnDezabonare" layoutX="20.0" layoutY="170.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Dezabonare" />
-      <TableView fx:id="tableViewEvenimente" layoutX="206.0" layoutY="57.0" prefHeight="268.0" prefWidth="374.0" stylesheets="@../style/styletable3.css">
+      <Button id="sale" fx:id="btnAbonare" layoutX="47.0" layoutY="61.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="105.0" stylesheets="@../style/stylesheet.css" text="Abonare" />
+      <Button id="sale" fx:id="btnDezabonare" layoutX="47.0" layoutY="121.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Dezabonare" />
+      <TableView fx:id="tableViewEvenimente" layoutX="165.0" layoutY="42.0" prefHeight="157.0" prefWidth="369.0" stylesheets="@../style/styletable3.css">
         <columns>
             <TableColumn fx:id="tableColumnEventName" prefWidth="138.0" text="NumeEvent" />
             <TableColumn fx:id="tableColumnDateEvent" prefWidth="138.0" text="DataEvent" />
         </columns>
       </TableView>
-      <Button id="sale" fx:id="btnNext" layoutX="393.0" layoutY="349.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Next &gt;" />
-      <Button id="sale" fx:id="btnPrev" layoutX="307.0" layoutY="349.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="&lt; Prev" />
+      <Button id="line" fx:id="btnNext" layoutX="313.0" layoutY="219.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Next &gt;" />
+      <Button id="line" fx:id="btnPrev" layoutX="252.0" layoutY="219.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="&lt; Prev" />
+      <Label layoutX="165.0" layoutY="14.0" text="Evenimente:" textFill="WHITE" />
    </children>
 </AnchorPane>

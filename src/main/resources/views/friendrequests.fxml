@@ -11,13 +11,13 @@
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
 
             <AnchorPane />
-                <Button id="sale" fx:id="btnCancelInvite" layoutX="814.0" layoutY="160.0" onAction="#handleCancelInvite" prefHeight="42.0" prefWidth="143.0" stylesheets="@../style/stylesheet.css">
+                <Button id="sale" fx:id="btnCancelInvite" layoutX="799.0" layoutY="283.0" onAction="#handleCancelInvite" prefHeight="42.0" prefWidth="143.0" stylesheets="@../style/stylesheet.css" text="Cancel Invite">
                                 Cancel Invite
                             </Button>
-                <Button id="sale" fx:id="btnAcceptInvite" layoutX="818.0" layoutY="105.0" onAction="#handleAcceptInvite" prefHeight="42.0" prefWidth="136.0" stylesheets="@../style/stylesheet.css" text="Accept Invite">
+                <Button id="sale" fx:id="btnAcceptInvite" layoutX="799.0" layoutY="77.0" onAction="#handleAcceptInvite" prefHeight="42.0" prefWidth="136.0" stylesheets="@../style/stylesheet.css" text="Accept Invite">
                                 Accept Invite
                             </Button>
-              <TableView fx:id="tableViewInviteRecieve" layoutX="20.0" layoutY="300.0" prefHeight="145.0" prefWidth="709.0" stylesheets="@../style/tableViewStyle.css" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="275.0" AnchorPane.topAnchor="300.0">
+              <TableView fx:id="tableViewInviteRecieve" layoutX="26.0" layoutY="26.0" prefHeight="145.0" prefWidth="709.0" stylesheets="@../style/tableViewStyle.css" AnchorPane.bottomAnchor="323.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="269.0" AnchorPane.topAnchor="26.0">
                   <columns>
                       <TableColumn fx:id="tableColumnFirstNameToRec" prefWidth="138.0" text="FristName" />
                       <TableColumn fx:id="tableColumnLastNameToRec" prefWidth="138.0" text="LastName" />
@@ -25,7 +25,7 @@
                       <TableColumn fx:id="tableColumnDateRec" prefWidth="138.0" text="Data" />
                   </columns>
               </TableView>
-              <TableView fx:id="tableViewInvite" layoutX="20.0" prefHeight="160.0" prefWidth="709.0" stylesheets="@../style/tableViewStyle.css" AnchorPane.bottomAnchor="334.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="275.0" AnchorPane.topAnchor="0.0">
+              <TableView fx:id="tableViewInvite" layoutX="26.0" layoutY="247.0" prefHeight="160.0" prefWidth="709.0" stylesheets="@../style/tableViewStyle.css" AnchorPane.bottomAnchor="87.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="269.0" AnchorPane.topAnchor="247.0">
                   <columns>
                       <TableColumn fx:id="tableColumnLastNameTo" prefWidth="138.0" text="LastName" />
                       <TableColumn fx:id="tableColumnStatus" prefWidth="138.0" text="Status" />

@@ -4,46 +4,46 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="639.0" prefWidth="667.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.UserPageController">
+<AnchorPane fx:id="acPaneLeft" prefHeight="639.0" prefWidth="667.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.UserPageController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="147.0" style="-fx-background-color: #271033;">
+      <VBox fx:id="vBoxPage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="147.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#home" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="Home" textFill="WHITE" underline="true">
+            <Button id="blackBtn" fx:id="btn1" mnemonicParsing="false" onAction="#home" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #000000;" stylesheets="@../style/stylesheet.css" text="Home" textFill="WHITE" underline="true">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#messages" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="Admin" textFill="WHITE">
+            <Button fx:id="btn2" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#messages" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #ffffff;" stylesheets="@../style/stylesheet.css" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="144.0" mnemonicParsing="false" onAction="#reports" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" text="Rapoarte" textFill="WHITE">
+            <Button fx:id="btn3" layoutX="10.0" layoutY="144.0" mnemonicParsing="false" onAction="#reports" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #000000;" stylesheets="@../style/stylesheet.css" text="Rapoarte" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" text="LogOut" textFill="WHITE">
+            <Button fx:id="btn4" layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #ffffff;" stylesheets="@../style/stylesheet.css" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" textFill="WHITE">
+            <Button fx:id="btn5" layoutX="10.0" layoutY="211.0" mnemonicParsing="false" onAction="#logout" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #000000;" stylesheets="@../style/stylesheet.css" text="LogOut" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="279.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" textFill="WHITE">
+            <Button fx:id="btn6" layoutX="10.0" layoutY="279.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #ffffff;" stylesheets="@../style/stylesheet.css" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="346.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #4B0082;" textFill="WHITE">
+            <Button fx:id="btn7" layoutX="10.0" layoutY="346.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: #000000;" stylesheets="@../style/stylesheet.css" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="10.0" layoutY="413.0" mnemonicParsing="false" onAction="#friends" prefHeight="67.0" prefWidth="183.0" style="-fx-background-color: transparent;" textFill="WHITE">
+            <Button fx:id="btn8" layoutX="10.0" layoutY="413.0" mnemonicParsing="false" onAction="#friends" prefHeight="170.0" prefWidth="147.0" style="-fx-background-color: #ffffff;" stylesheets="@../style/stylesheet.css" textFill="WHITE">
                <font>
                   <Font name="Rockwell" size="18.0" />
                </font>
@@ -51,6 +51,6 @@
             
          </children>
       </VBox>
-      <AnchorPane fx:id="acdinamic" layoutX="147.0" prefHeight="639.0" prefWidth="1102.0" style="-fx-background-color: #271033;" />
+      <AnchorPane fx:id="acdinamic" layoutX="147.0" prefHeight="639.0" prefWidth="1120.0" />
    </children>
 </AnchorPane>

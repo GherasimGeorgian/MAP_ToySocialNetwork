@@ -1,5 +1,6 @@
 package socialnetwork.controller;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,7 +27,7 @@ public class AbonareEventController implements Observer<ChangeEvent> {
         setFriendsSelectedUser();
     }
 
-    int currentPage = 0;
+    int currentPageEvents = 0;
 
     @FXML
     Button btnNext;
@@ -47,22 +48,24 @@ public class AbonareEventController implements Observer<ChangeEvent> {
     @FXML
     TableColumn<Eveniment, String> tableColumnEventName;
     @FXML
-    TableColumn<Eveniment, LocalDateTime> tableColumnDateEvent;
+    TableColumn<Eveniment, String> tableColumnDateEvent;
+
+
 
     ObservableList<Eveniment> modelEveniment = FXCollections.observableArrayList();
 
     private void setFriendsSelectedUser() {
-        modelEveniment.setAll(StreamSupport.stream(service.getEventsOnPage(currentPage).spliterator(), false)
+        modelEveniment.setAll(StreamSupport.stream(service.getEventsOnPage(currentPageEvents).spliterator(), false)
                 .collect(Collectors.toList()));
 
         tableColumnEventName.setCellValueFactory(new PropertyValueFactory<Eveniment, String>("nameEvent"));
-        tableColumnDateEvent.setCellValueFactory(new PropertyValueFactory<Eveniment, LocalDateTime>("dataEvent"));
-
+        //tableColumnDateEvent.setCellValueFactory(new PropertyValueFactory<Eveniment, LocalDateTime>("dataEvent"));
+        tableColumnDateEvent.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getDataString()));
         tableViewEvenimente.setItems(modelEveniment);
 
     }
     private void initModel() {
-        modelEveniment.setAll(StreamSupport.stream(service.getEventsOnPage(currentPage).spliterator(), false)
+        modelEveniment.setAll(StreamSupport.stream(service.getEventsOnPage(currentPageEvents).spliterator(), false)
                 .collect(Collectors.toList()));
     }
     @Override
@@ -72,20 +75,24 @@ public class AbonareEventController implements Observer<ChangeEvent> {
 
     @FXML
     public void initialize() {
+
         tableViewEvenimente.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         btnNext.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                currentPage++;
+                currentPageEvents++;
                 initModel();
+                if(modelEveniment.size() == 0){
+                    currentPageEvents--;
+                    initModel();
+                }
             }
         });
-
         btnPrev.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(currentPage > 0) {
-                    currentPage--;
+                if(currentPageEvents > 0) {
+                    currentPageEvents--;
                     initModel();
                 }
             }
@@ -98,17 +105,16 @@ public class AbonareEventController implements Observer<ChangeEvent> {
                     MessageAlert.showErrorMessage(null,"Trebuie sa selectezi un eveniment pentru a te abona la acesta!!");
                 }
                 else{
-                   AbonareEveniment abonare =  service.abonareEveniment(selectedItem,user_app);
-                   if(abonare == null){
-                       MessageAlert.showErrorMessage(null,"Esti deja abonat la acest eveniment!");
-                   }
-                   else{
-                       MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Succes","Te-ai abonat cu succes la acest eveniment!");
-                   }
+                    AbonareEveniment abonare =  service.abonareEveniment(selectedItem,user_app);
+                    if(abonare == null){
+                        MessageAlert.showErrorMessage(null,"Esti deja abonat la acest eveniment!");
+                    }
+                    else{
+                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Succes","Te-ai abonat cu succes la acest eveniment!");
+                    }
                 }
             }
         });
-
         btnDezabonare.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

@@ -3,9 +3,15 @@ package socialnetwork.controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import socialnetwork.domain.Account;
 import socialnetwork.domain.Utilizator;
@@ -24,8 +30,11 @@ import java.util.Random;
 public class CreateAccountController {
     private UserServiceFullDB service;
     private Utilizator user_app;
-    public void setService(UserServiceFullDB service) {
+    private int darkMode;
+    public void setService(UserServiceFullDB service,int darkMode) {
         this.service=service;
+        this.darkMode = darkMode;
+        loadMode();
         changeImage();
     }
     public String confirmCode=null;
@@ -61,6 +70,79 @@ public class CreateAccountController {
 
     @FXML
     ImageView imageView1;
+
+    @FXML
+    AnchorPane acCreateAC;
+
+    @FXML
+    Label lblNume;
+
+    @FXML
+    Label lblPrenume;
+
+    @FXML
+    Label lblEmail;
+
+    @FXML
+    Label lblPass;
+
+    @FXML
+    Label lblCPass;
+
+  public void loadMode(){
+      if(darkMode == 0){
+          darkMode();
+      }else{
+          whiteMode();
+      }
+  }
+
+    public void whiteMode(){
+        //anchorPane
+        acCreateAC.setBackground(new Background(new BackgroundFill(Color.web("#" + "ffffff"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //labels
+        lblNume.setTextFill(Color.web("#000000"));
+        lblPrenume.setTextFill(Color.web("#000000"));
+        lblPass.setTextFill(Color.web("#000000"));
+        lblCPass.setTextFill(Color.web("#000000"));
+        lblEmail.setTextFill(Color.web("#000000"));
+        //checkbox
+        checkBoxCondition.setTextFill(Color.web("#000000"));
+
+        //buttons
+        //buttons
+
+        btnCreate.setId("sale");
+        btnCancel.setId("sale");
+
+
+    }
+
+    public void darkMode(){
+        //anchorPane
+        acCreateAC.setBackground(new Background(new BackgroundFill(Color.web("#" + "000000"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //labels
+
+        lblNume.setTextFill(Color.web("#ffffff"));
+        lblPrenume.setTextFill(Color.web("#ffffff"));
+        lblPass.setTextFill(Color.web("#ffffff"));
+        lblCPass.setTextFill(Color.web("#ffffff"));
+        lblEmail.setTextFill(Color.web("#ffffff"));
+        //checkbox
+        checkBoxCondition.setTextFill(Color.web("#ffffff"));
+
+        //buttons
+
+        btnCreate.setId("sale2");
+        btnCancel.setId("sale2");
+
+
+
+
+    }
+
     private void changeImage(){
         try {
             List<String> listaImagini = new ArrayList<>();

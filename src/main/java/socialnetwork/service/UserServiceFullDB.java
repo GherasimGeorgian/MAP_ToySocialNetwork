@@ -351,7 +351,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
                 .filter(byLastName)
                 .collect(toSingleton());
            allUsers = StreamSupport.stream(resultUser.getFriends().spliterator(), false)
-                  .map(x->new PrietenieDTO(x.getFirstName(),x.getLastName(),
+                  .map(x->new PrietenieDTO(getAccountByUserId(x.getId()).getUrl_photo(),x.getFirstName(),x.getLastName(),
                           StreamSupport.stream(repoPrietenie.findAll().spliterator(), false)
                                   .filter(a -> a.getId().getLeft().toString().equals(resultUser.getId().toString())
                                           || a.getId().getRight().toString().equals(resultUser.getId().toString()))
@@ -393,7 +393,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
                     .filter(byLastName)
                     .collect(toSingleton());
             allUsers = StreamSupport.stream(resultUser.getFriends().spliterator(), false)
-                    .map(x->new PrietenieDTO(x.getFirstName(),x.getLastName(),
+                    .map(x->new PrietenieDTO(getAccountByUserId(x.getId()).getUrl_photo(),x.getFirstName(),x.getLastName(),
                             StreamSupport.stream(repoPrietenie.findAll().spliterator(), false)
                                     .filter(a -> a.getId().getLeft().toString().equals(resultUser.getId().toString())
                                             || a.getId().getRight().toString().equals(resultUser.getId().toString()))
@@ -756,7 +756,7 @@ public class UserServiceFullDB implements Observable<ChangeEvent> {
                     .filter(byLastName)
                     .collect(toSingleton());
             allUsers = StreamSupport.stream(resultUser.getFriends().spliterator(), false)
-                    .map(x->new PrietenieDTO(x.getFirstName(),x.getLastName(),
+                    .map(x->new PrietenieDTO(getAccountByUserId(x.getId()).getUrl_photo(),x.getFirstName(),x.getLastName(),
                             StreamSupport.stream(repoPrietenie.findAll().spliterator(), false)
                                     .filter(a -> a.getId().getLeft().toString().equals(resultUser.getId().toString())
                                             || a.getId().getRight().toString().equals(resultUser.getId().toString()))

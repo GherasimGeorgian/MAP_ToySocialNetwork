@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -21,9 +22,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import socialnetwork.domain.*;
 import socialnetwork.service.ServiceException;
@@ -130,6 +136,8 @@ public class PageController implements Observer<ChangeEvent> {
     @FXML
     TableView<PrietenieDTO> tableViewUserFriends;
     @FXML
+    TableColumn<PrietenieDTO, Image> tableColumnImage;
+    @FXML
     TableColumn<PrietenieDTO, String> tableColumnFirstName;
     @FXML
     TableColumn<PrietenieDTO, String> tableColumnLastName;
@@ -150,15 +158,9 @@ public class PageController implements Observer<ChangeEvent> {
 
     int secundeNotify = 60;
 
-    ObservableList<Invite> modelInvite = FXCollections.observableArrayList();
 
-    @FXML
-    TableView<Invite> tableViewInvite2;
-    @FXML
-    TableColumn<Invite, String> tableColumnFirstNameToRec2;
 
-    @FXML
-    TableColumn<Invite, String> tableColumnLastNameToRec2;
+
 
 
     //textfields
@@ -180,52 +182,107 @@ public class PageController implements Observer<ChangeEvent> {
 
     ObservableList<String> listViewnotificari = FXCollections.observableArrayList();
 
-    @FXML
-    TableView<Eveniment> tableViewEvents;
-
-    @FXML
-    Button btnNext;
-
-    @FXML
-    Button btnPrev;
-
-    @FXML
-    Button btnAbonare;
-
-    @FXML
-    Button btnDezabonare;
 
 
     @FXML
-    Button btnRejectInvite;
+    Button btnChangeImage;
 
-    @FXML
-    TableColumn<Eveniment, String> tableColumnEventName2;
-    @FXML
-    TableColumn<Eveniment, String> tableColumnDateEvent2;
+
+
+
+
 
     @FXML
     ImageView imageViewProfile;
 
-    ObservableList<Eveniment> modelEveniment = FXCollections.observableArrayList();
+    @FXML
+    Label lblTimer;
 
+    @FXML
+    Label lblCauta;
 
-    public void setService(UserServiceFullDB Userservice, Utilizator userConn) {
+    @FXML
+    AnchorPane acPage;
+
+    private int darkMode;
+
+    public void setService(UserServiceFullDB Userservice, Utilizator userConn,int darkMode) {
         this.service = Userservice;
         this.user_app = userConn;
+        this.darkMode = darkMode;
         pageUser = new Page(service);
         pageUser.createPage(userConn);
         service.addObserver(this);
+        loadMode();
         setCurrentUser();
         setFriendsSelectedUser();
-        initModelFriendsRequests();
-        setModelEvents();
         setImageProfile(user_app);
         notFriends = service.notRelatiiUser(user_app.getFirstName(), user_app.getLastName());
         setlblFirstNameText(pageUser.getFirstName());
         setlblLastNameText(pageUser.getLastName());
         AlertaNotificare();
         eventsAlertStart();
+
+    }
+
+    public void loadMode(){
+        if(darkMode == 0){
+            darkMode();
+        }else{
+            whiteMode();
+        }
+    }
+    public void whiteMode(){
+        //anchorPane
+        acPage.setBackground(new Background(new BackgroundFill(Color.web("#" + "9bf6ff"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //labels
+        lblFirstName.setTextFill(Color.web("#000000"));
+        lblLastName.setTextFill(Color.web("#000000"));
+        lblUser.setTextFill(Color.web("#000000"));
+        lblTimer.setTextFill(Color.web("#000000"));
+        lblCauta.setTextFill(Color.web("#000000"));
+
+
+        //tableview
+        tableViewUserFriends.setId("table-view2");
+        //buttons
+
+        btnCreateEvent.setId("sale");
+        btnCreateEvent.setId("sale");
+        btnAbonareEveniment.setId("sale");
+        btnAddNewFriend.setId("sale");
+        btnfriendrequests.setId("sale");
+
+
+
+    }
+
+    public void darkMode(){
+        //anchorPane
+        acPage.setBackground(new Background(new BackgroundFill(Color.web("#" + "151612"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //labels
+
+        lblFirstName.setTextFill(Color.web("#ffffff"));
+        lblLastName.setTextFill(Color.web("#ffffff"));
+        lblUser.setTextFill(Color.web("#ffffff"));
+        lblTimer.setTextFill(Color.web("#ffffff"));
+        lblCauta.setTextFill(Color.web("#ffffff"));
+
+
+        //tables
+        tableViewUserFriends.setId("table-view2");
+        //buttons
+
+        btnCreateEvent.setId("sale2");
+        btnCreateEvent.setId("sale2");
+        btnAbonareEveniment.setId("sale2");
+        btnAddNewFriend.setId("sale2");
+        btnfriendrequests.setId("sale2");
+
+
+
 
     }
 
@@ -270,7 +327,6 @@ public class PageController implements Observer<ChangeEvent> {
         if (t == ChangeEventType.I_ADD || t == ChangeEventType.I_DEL || t == ChangeEventType.I_UPD ||
                 t == ChangeEventType.P_ADD || t == ChangeEventType.P_DEL || t == ChangeEventType.P_UPD) {
             initModel();
-            initModelFriendsRequests();
             notFriends = service.notRelatiiUser(user_app.getFirstName(), user_app.getLastName());
         }
         if (t == ChangeEventType.P_ADD) {
@@ -286,9 +342,8 @@ public class PageController implements Observer<ChangeEvent> {
             }
         }
         if (t == ChangeEventType.E_ADD) {
-            initModelEvents();
             Eveniment evenimentAdaugat = (Eveniment) event.getData();
-            listViewNotificari.getItems().add(new String("TYPE:EVENIMENT:" + "ID:" + evenimentAdaugat.getId() + ":X" + "A fost recent un eveniment! " + evenimentAdaugat.getNameEvent() + " la data " + FormatLDT.convert(evenimentAdaugat.getDataEvent())));
+            listViewNotificari.getItems().add(new String("TYPE:EVENIMENT:" + "ID:" + evenimentAdaugat.getId() + ":X" + "A fost creat recent un eveniment! " + evenimentAdaugat.getNameEvent() + " la data " + FormatLDT.convert(evenimentAdaugat.getDataEvent())));
 
         }
 
@@ -318,29 +373,10 @@ public class PageController implements Observer<ChangeEvent> {
 
     }
 
-    private void initModelFriendsRequests() {
-        Iterable<Invite> invites = service.allinvitationsToUsers(user_app.getFirstName(),user_app.getLastName());
-        List<Invite> invitesList = StreamSupport.stream(invites.spliterator(),false)
-                .collect(Collectors.toList());
-        modelInvite.setAll(invitesList);
-    }
-    int currentPageEvents = 0;
 
-    private void setModelEvents() {
-        modelEveniment.setAll(StreamSupport.stream(service.getEventsOnPage(currentPageEvents).spliterator(), false)
-                .collect(Collectors.toList()));
 
-        tableColumnEventName2.setCellValueFactory(new PropertyValueFactory<Eveniment, String>("nameEvent"));
-        tableColumnDateEvent2.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getDataString()));
 
-        tableViewEvents.setItems(modelEveniment);
 
-    }
-    private void initModelEvents() {
-
-        modelEveniment.setAll(StreamSupport.stream(service.getEventsOnPage(currentPageEvents).spliterator(), false)
-                .collect(Collectors.toList()));
-    }
 
     @FXML
     public void initialize() {
@@ -349,63 +385,9 @@ public class PageController implements Observer<ChangeEvent> {
         listViewNotificari.setCellFactory(param -> new ListViewNotificari.Cell(service,user_app));
         textFieldSearchFriend.textProperty().addListener(x->handleFilterFriends());
 
-        tableViewEvents.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        btnNext.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                currentPageEvents++;
-                initModelEvents();
-                if(modelEveniment.size() == 0){
-                    currentPageEvents--;
-                    initModelEvents();
-                }
-            }
-        });
-        btnPrev.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(currentPageEvents > 0) {
-                    currentPageEvents--;
-                    initModelEvents();
-                }
-            }
-        });
-        btnAbonare.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Eveniment selectedItem = tableViewEvents.getSelectionModel().getSelectedItem();
-                if(selectedItem == null){
-                    MessageAlert.showErrorMessage(null,"Trebuie sa selectezi un eveniment pentru a te abona la acesta!!");
-                }
-                else{
-                    AbonareEveniment abonare =  service.abonareEveniment(selectedItem,user_app);
-                    if(abonare == null){
-                        MessageAlert.showErrorMessage(null,"Esti deja abonat la acest eveniment!");
-                    }
-                    else{
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Succes","Te-ai abonat cu succes la acest eveniment!");
-                    }
-                }
-            }
-        });
-        btnDezabonare.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Eveniment selectedItem = tableViewEvents.getSelectionModel().getSelectedItem();
-                if(selectedItem == null){
-                    MessageAlert.showErrorMessage(null,"Trebuie sa selectezi un eveniment pentru a te dezabona de la acesta!!");
-                }
-                else{
-                    AbonareEveniment abonare =  service.dezabonareEveniment(selectedItem,user_app);
-                    if(abonare == null){
-                        MessageAlert.showErrorMessage(null,"S-a produs o eroare!");
-                    }
-                    else{
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Succes","Te-ai dezabonat cu succes la acest eveniment!");
-                    }
-                }
-            }
-        });
+
+
+
 
         btnSendInvite.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -450,11 +432,7 @@ public class PageController implements Observer<ChangeEvent> {
         });
         //
 
-        tableViewInvite2.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        tableColumnFirstNameToRec2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFromInvite().getFirstName()));
-        tableColumnLastNameToRec2.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFromInvite().getLastName()));
-        tableViewInvite2.setItems(modelInvite);
 
 
         txtSeconds.setOnKeyPressed(new EventHandler<KeyEvent>()
@@ -723,36 +701,7 @@ public class PageController implements Observer<ChangeEvent> {
                 }
             }
         });
-        btnRejectInvite.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Invite selected = tableViewInvite2.getSelectionModel().getSelectedItem();
-                if(selected != null) {
-                    if(selected.getStatus() == InviteStatus.PENDING) {
-                        try {
-                            service.rejectInvite(selected);
-                        } catch (Exception e) {
 
-                        }
-
-                    }
-                    else{
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Atentie");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Invitatia trebuie sa fie Pending!");
-                        alert.showAndWait();
-                    }
-                }
-                else{
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Atentie");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Nu ai selectat nimic!");
-                    alert.showAndWait();
-                }
-            }
-        });
 
         btnfriendrequests.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -784,12 +733,12 @@ public class PageController implements Observer<ChangeEvent> {
                 }
             }
         });
-        imageViewProfile.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
+
+        btnChangeImage.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(MouseEvent event) {
+            public void handle(ActionEvent event) {
                 changeProfilePhoto(user_app);
-                event.consume();
             }
         });
 
@@ -817,9 +766,47 @@ public class PageController implements Observer<ChangeEvent> {
     private void setFriendsSelectedUser() {
         modelCurrentUser.setAll(pageUser.getPrieteni());
 
+
+        tableColumnImage.setCellValueFactory(new PropertyValueFactory<>("image"));
+        tableColumnImage.setMaxWidth(80);
+        tableColumnImage.setCellFactory(tc -> {
+
+            File file1 = new File("C:/Users/ghera/IdeaProjects/MAP_ToySocialNetwork/src/main/java/socialnetwork/utils/Logare/bell.png");
+            File file2 = new File("C:/Users/ghera/IdeaProjects/MAP_ToySocialNetwork/src/main/java/socialnetwork/utils/Logare/bell.png");
+
+
+            TableCell<PrietenieDTO, Image> cell = new TableCell<PrietenieDTO, Image>() {
+                private ImageView imageView = new ImageView();
+
+                @Override
+                protected void updateItem(Image active, boolean empty) {
+                    super.updateItem(active, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                            try {
+
+                                imageView.setFitHeight(80);
+                                imageView.setFitWidth(80);
+                                imageView.setPreserveRatio(true);
+                                imageView.setImage(active);
+                            } catch (Exception ex) {
+
+                            }
+
+                        setGraphic(imageView);
+                    }
+                }
+            };
+            return cell ;
+        });
+        //tableColumnImage.setPrefWidth(60);
         tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<PrietenieDTO, String>("firstName"));
+        tableColumnFirstName.setMaxWidth(90);
         tableColumnLastName.setCellValueFactory(new PropertyValueFactory<PrietenieDTO, String>("lastName"));
+        tableColumnLastName.setMaxWidth(90);
         tableColumnDate.setCellValueFactory(new PropertyValueFactory<PrietenieDTO, LocalDateTime>("date"));
+
 
         tableViewUserFriends.setItems(modelCurrentUser);
 
@@ -888,38 +875,12 @@ public class PageController implements Observer<ChangeEvent> {
         lblLastName.setText(text);
     }
 
-    public void handleAcceptInvite(ActionEvent actionEvent) {
-        Invite selected = tableViewInvite2.getSelectionModel().getSelectedItem();
-        if(selected != null) {
-            if(selected.getStatus() == InviteStatus.PENDING) {
-                try {
-                    service.acceptaInvitatie(selected.getId());
-                } catch (Exception e) {
 
-                }
-
-            }
-            else{
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Atentie");
-                alert.setHeaderText(null);
-                alert.setContentText("Invitatia trebuie sa fie Pending!");
-                alert.showAndWait();
-            }
-        }
-        else{
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Atentie");
-            alert.setHeaderText(null);
-            alert.setContentText("Nu ai selectat nimic!");
-            alert.showAndWait();
-        }
-    }
     final FileChooser fileChooser = new FileChooser();
 
     public void changeProfilePhoto(Utilizator user) {
         Account account = service.findAccountByUserName(user);
-        Stage stage = (Stage) btnAbonare.getScene().getWindow();
+        Stage stage = (Stage) btnCreateEvent.getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
 
         if (file != null) {

@@ -69,6 +69,26 @@ public class ListViewNotificari {
                     if(type.toLowerCase().equals("invite") && idtype != null){
                         Invite invitatie =  service.findOneInvite(idtype);
                         MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre noua invitatie","Utilizatorul cu numele " + invitatie.getFromInvite().getLastName() +" si prenumele " +  invitatie.getFromInvite().getFirstName()+" ti-a trimis o cerere de prietenie!");
+                        try {
+                            FXMLLoader fxmlLoader = new FXMLLoader();
+                            fxmlLoader.setLocation(getClass().getResource("/views/cerere_profil.fxml"));
+                            AnchorPane root=fxmlLoader.load();
+                            CerereProfilController cprofilController = fxmlLoader.getController();
+                            cprofilController.setService(service,user_app);
+                            Scene scene = new Scene(root, 600, 400);
+
+
+                            Stage newStage = new Stage();
+
+                            newStage.setTitle("Cereri de prietenie");
+                            newStage.setScene(scene);
+
+                            newStage.show();
+
+                        } catch (IOException e) {
+                            Logger logger = Logger.getLogger(getClass().getName());
+                            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+                        }
                     }
                     if(type.toLowerCase().equals("inviterej") && idtype != null){
                         Invite invitatie =  service.findOneInvite(idtype);
@@ -151,8 +171,18 @@ public class ListViewNotificari {
 
                         }
                     }
+                    else{
+                        File file1 = new File("C:/Users/ghera/IdeaProjects/MAP_ToySocialNetwork/src/main/java/socialnetwork/utils/Logare/bell.png");
+                        try {
+                            Image a = new Image(file1.toURI().toURL().toExternalForm());
+                            imageView.setImage(a);
+                        } catch (Exception ex) {
+
+                        }
+                    }
 
                 }
+
                 list_element = parts[1];
                 label.setText(parts[1]);
                 setGraphic(hbox);

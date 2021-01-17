@@ -12,9 +12,11 @@ import socialnetwork.service.UserServiceFullDB;
 public class NewThreadWindow {
     private UserServiceFullDB service;
     private Utilizator user_app=null;
-    public NewThreadWindow(UserServiceFullDB service,Utilizator user_app){
+    private int darkMode;
+    public NewThreadWindow(UserServiceFullDB service,Utilizator user_app,int darkMode){
         this.service = service;
         this.user_app = user_app;
+        this.darkMode = darkMode;
     }
     public void execute(){
 
@@ -34,13 +36,14 @@ public class NewThreadWindow {
                     AnchorPane root = fxmlLoader.load();
 
                     UserPageController ctrl = fxmlLoader.getController();
-                    ctrl.setService(service, user_app);
+                    ctrl.setService(service, user_app,darkMode);
 
                     Stage stagePageUser = new Stage();
-                    Scene scene = new Scene(root, 1271, 562);
+                    Scene scene = new Scene(root, 1200, 562);
 
                     stagePageUser.setTitle("UserPage");
                     stagePageUser.setScene(scene);
+                    stagePageUser.setResizable(false);
                     stagePageUser.show();
                 }catch(Exception ex){
                     System.out.println(ex);

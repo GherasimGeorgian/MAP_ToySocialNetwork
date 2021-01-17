@@ -1,15 +1,13 @@
 package socialnetwork.controller;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -21,6 +19,8 @@ import socialnetwork.domain.Utilizator;
 import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.utils.password.PasswordHashing;
 import socialnetwork.utils.threads.NewThreadWindow;
+
+import javax.swing.event.ChangeListener;
 
 public class LoginStartController {
     private UserServiceFullDB service;
@@ -47,12 +47,74 @@ public class LoginStartController {
     @FXML
     Button btnCreateNewAccount;
 
-    //cava
-    int ceva;
+    @FXML
+    CheckBox cBDarkMode;
+
+    @FXML
+    AnchorPane acLogin;
+
+    @FXML
+    Label lblName;
+
+    @FXML
+    Label lblPass;
+    int darkMode = 1;
+
+    public void whiteMode(){
+        //anchorPane
+        acLogin.setBackground(new Background(new BackgroundFill(Color.web("#" + "ffffff"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //labels
+        lblName.setTextFill(Color.web("#000000"));
+        lblPass.setTextFill(Color.web("#000000"));
+        //checkbox
+        cBDarkMode.setTextFill(Color.web("#000000"));
+
+        //buttons
+        //buttons
+
+        btnLogin.setId("sale");
+        btnCancel.setId("sale");
+        btnCreateNewAccount.setId("sale");
+
+    }
+
+    public void darkMode(){
+        //anchorPane
+        acLogin.setBackground(new Background(new BackgroundFill(Color.web("#" + "000000"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //labels
+        lblName.setTextFill(Color.web("#ffffff"));
+        lblPass.setTextFill(Color.web("#ffffff"));
+        //checkbox
+        cBDarkMode.setTextFill(Color.web("#ffffff"));
+
+        //buttons
+
+        btnLogin.setId("sale2");
+        btnCancel.setId("sale2");
+        btnCreateNewAccount.setId("sale2");
+
+
+
+    }
+
     @FXML
     public void initialize() {
 
 
+        cBDarkMode.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(cBDarkMode.isSelected()){
+                    darkMode();
+                    darkMode =0;
+                }else{
+                    whiteMode();
+                    darkMode =1;
+                }
+            }
+        });
 
         btnLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -76,7 +138,7 @@ public class LoginStartController {
                         textFieldPassword.clear();
                     }
                     else{
-                        NewThreadWindow th = new NewThreadWindow(service,user_app);
+                        NewThreadWindow th = new NewThreadWindow(service,user_app,darkMode);
                         th.execute();
 
                         textFieldEmail.clear();
@@ -105,7 +167,7 @@ public class LoginStartController {
                     AnchorPane root=fxmlLoader.load();
 
                     CreateAccountController ctrl =fxmlLoader.getController();
-                    ctrl.setService(service);
+                    ctrl.setService(service,darkMode);
 
                     Stage stageCreateAccount = new Stage();
                     Scene scene = new Scene(root, 1000, 500);
