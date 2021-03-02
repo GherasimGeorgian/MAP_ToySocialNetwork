@@ -60,15 +60,15 @@ public class ListViewNotificari {
                 public void handle(ActionEvent event) {
                     if(type.toLowerCase().equals("eveniment") && idtype != null){
                         Eveniment eventGasit =  service.findOneEvent(idtype);
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre eveniment","Evenimentul "+eventGasit.getNameEvent() + " se organizeaza la data " + eventGasit.getDataString());
+                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre eveniment","Evenimentul "+eventGasit.getNameEvent() + '\n'+ " se organizeaza la data " + eventGasit.getDataString());
                     }
                     if(type.toLowerCase().equals("prietenie") && idtype != null){
                         Utilizator userGasit =  service.findOneUser(idtype);
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre noua prietenie","Utilizatorul cu numele " + userGasit.getLastName() +" si prenumele " +  userGasit.getFirstName()+" te-a adaugat la prieteni");
+                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre noua prietenie","Utilizatorul cu numele " + '\n'+ userGasit.getLastName() +" si prenumele " +  userGasit.getFirstName()+" te-a adaugat la prieteni");
                     }
                     if(type.toLowerCase().equals("invite") && idtype != null){
                         Invite invitatie =  service.findOneInvite(idtype);
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre noua invitatie","Utilizatorul cu numele " + invitatie.getFromInvite().getLastName() +" si prenumele " +  invitatie.getFromInvite().getFirstName()+" ti-a trimis o cerere de prietenie!");
+                       // MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre noua invitatie","Utilizatorul cu numele " +  '\n'+invitatie.getFromInvite().getLastName() +" si prenumele " +  invitatie.getFromInvite().getFirstName()+" ti-a trimis o cerere de prietenie!");
                         try {
                             FXMLLoader fxmlLoader = new FXMLLoader();
                             fxmlLoader.setLocation(getClass().getResource("/views/cerere_profil.fxml"));
@@ -92,11 +92,11 @@ public class ListViewNotificari {
                     }
                     if(type.toLowerCase().equals("inviterej") && idtype != null){
                         Invite invitatie =  service.findOneInvite(idtype);
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre invitatia respinsa","Utilizatorul cu numele " + invitatie.getFromInvite().getLastName() +" si prenumele " +  invitatie.getFromInvite().getFirstName()+" ti-a respins cererea de prietenie!");
+                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre invitatia respinsa","Utilizatorul cu numele " + '\n'+ invitatie.getFromInvite().getLastName() +" si prenumele " +  invitatie.getFromInvite().getFirstName()+" ti-a respins cererea de prietenie!");
                     }
                     if(type.toLowerCase().equals("prieteniedel") && idtype != null){
                         Utilizator userGasit =  service.findOneUser(idtype);
-                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre prietenie","Utilizatorul cu numele " + userGasit.getLastName() +" si prenumele " +  userGasit.getFirstName()+" te-a sters de la prieteni");
+                        MessageAlert.showMessage(null, Alert.AlertType.INFORMATION,"Informatii despre prietenie","Utilizatorul cu numele "+ '\n' + userGasit.getLastName() +" si prenumele " +  userGasit.getFirstName()+" te-a sters de la prieteni");
                     }
 
 

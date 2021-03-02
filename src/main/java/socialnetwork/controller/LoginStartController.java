@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -21,6 +23,7 @@ import socialnetwork.utils.password.PasswordHashing;
 import socialnetwork.utils.threads.NewThreadWindow;
 
 import javax.swing.event.ChangeListener;
+import java.io.File;
 
 public class LoginStartController {
     private UserServiceFullDB service;
@@ -28,6 +31,7 @@ public class LoginStartController {
 
     public void setService(UserServiceFullDB service) {
         this.service=service;
+        setImageWhite();
     }
     //textfields
     @FXML
@@ -58,9 +62,15 @@ public class LoginStartController {
 
     @FXML
     Label lblPass;
+
+    @FXML
+    ImageView ivback;
+
     int darkMode = 1;
 
     public void whiteMode(){
+
+        setImageWhite();
         //anchorPane
         acLogin.setBackground(new Background(new BackgroundFill(Color.web("#" + "ffffff"), CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -80,6 +90,7 @@ public class LoginStartController {
     }
 
     public void darkMode(){
+        setImageBlack();
         //anchorPane
         acLogin.setBackground(new Background(new BackgroundFill(Color.web("#" + "000000"), CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -94,9 +105,32 @@ public class LoginStartController {
         btnLogin.setId("sale2");
         btnCancel.setId("sale2");
         btnCreateNewAccount.setId("sale2");
+    }
 
+    private void setImageWhite(){
 
+        try{
 
+            File file1 = new File("C:/Users/ghera/IdeaProjects/MAP_ToySocialNetwork/src/main/java/socialnetwork/utils/Logare/nice.jpg");
+            Image a = new Image(file1.toURI().toURL().toExternalForm());
+            ivback.setImage(a);
+
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());;
+        }
+    }
+
+    private void setImageBlack(){
+
+        try{
+
+            File file1 = new File("C:/Users/ghera/IdeaProjects/MAP_ToySocialNetwork/src/main/java/socialnetwork/utils/Logare/nice2.jpg");
+            Image a = new Image(file1.toURI().toURL().toExternalForm());
+            ivback.setImage(a);
+
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());;
+        }
     }
 
     @FXML

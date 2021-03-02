@@ -141,8 +141,8 @@ public class PageController implements Observer<ChangeEvent> {
     TableColumn<PrietenieDTO, String> tableColumnFirstName;
     @FXML
     TableColumn<PrietenieDTO, String> tableColumnLastName;
-    @FXML
-    TableColumn<PrietenieDTO, LocalDateTime> tableColumnDate;
+    //@FXML
+    //TableColumn<PrietenieDTO, LocalDateTime> tableColumnDate;
 
     //label
 
@@ -343,7 +343,7 @@ public class PageController implements Observer<ChangeEvent> {
         }
         if (t == ChangeEventType.E_ADD) {
             Eveniment evenimentAdaugat = (Eveniment) event.getData();
-            listViewNotificari.getItems().add(new String("TYPE:EVENIMENT:" + "ID:" + evenimentAdaugat.getId() + ":X" + "A fost creat recent un eveniment! " + evenimentAdaugat.getNameEvent() + " la data " + FormatLDT.convert(evenimentAdaugat.getDataEvent())));
+            listViewNotificari.getItems().add(new String("TYPE:EVENIMENT:" + "ID:" + evenimentAdaugat.getId() + ":X" + "A fost creat recent un eveniment! " + evenimentAdaugat.getNameEvent() ));
 
         }
 
@@ -805,7 +805,7 @@ public class PageController implements Observer<ChangeEvent> {
         tableColumnFirstName.setMaxWidth(90);
         tableColumnLastName.setCellValueFactory(new PropertyValueFactory<PrietenieDTO, String>("lastName"));
         tableColumnLastName.setMaxWidth(90);
-        tableColumnDate.setCellValueFactory(new PropertyValueFactory<PrietenieDTO, LocalDateTime>("date"));
+        //tableColumnDate.setCellValueFactory(new PropertyValueFactory<PrietenieDTO, LocalDateTime>("date"));
 
 
         tableViewUserFriends.setItems(modelCurrentUser);

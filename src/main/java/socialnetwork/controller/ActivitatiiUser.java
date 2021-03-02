@@ -12,6 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import jdk.jshell.execution.Util;
 import socialnetwork.domain.*;
 
@@ -23,6 +25,7 @@ import socialnetwork.utils.localdatetimeformat.FormatLDT;
 import socialnetwork.utils.observer.Observable;
 import socialnetwork.utils.observer.Observer;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashSet;
@@ -31,8 +34,8 @@ import java.util.HashSet;
 public class ActivitatiiUser implements Observer<ChangeEvent> {
     private UserServiceFullDB service;
     private Utilizator selectedUser = null;
-    @FXML
-    ComboBox comboBoxUsers;
+//    @FXML
+//    ComboBox comboBoxUsers;
 
     @FXML
     DatePicker date1;
@@ -53,16 +56,17 @@ public class ActivitatiiUser implements Observer<ChangeEvent> {
     ObservableList<PrietenieDTO> modelPrietenii = FXCollections.observableArrayList();
     ObservableList<Message> modelMesaje = FXCollections.observableArrayList();
 
-    public void setService(UserServiceFullDB service) {
+    public void setService(UserServiceFullDB service,Utilizator userApp) {
         this.service=service;
+        this.selectedUser = userApp;
         service.addObserver(this);
         initModelUser();
-        comboBoxUsers.setItems(modelUsers);
+
+        //comboBoxUsers.setItems(modelUsers);
     }
 
 
     private void initModelUser() {
-
         modelUsers.setAll(service.getAllUsersList());
     }
     private void initModelPrietenie(Utilizator user) {
@@ -99,30 +103,27 @@ public class ActivitatiiUser implements Observer<ChangeEvent> {
     public void initialize() {
         date1.valueProperty().addListener((ov, oldValue, newValue) -> {
             if(date2.getValue() != null) {
-                if (comboBoxUsers.getSelectionModel().getSelectedItem() != null) {
-                    selectedUser = (Utilizator) comboBoxUsers.getSelectionModel().getSelectedItem();
-                    showRaport();
-                }
+                showRaport();
             }
         });
 
         date2.valueProperty().addListener((ov, oldValue, newValue) -> {
             if(date1.getValue() != null){
-                if (comboBoxUsers.getSelectionModel().getSelectedItem() != null) {
-                    selectedUser = (Utilizator) comboBoxUsers.getSelectionModel().getSelectedItem();
+                //if (comboBoxUsers.getSelectionModel().getSelectedItem() != null) {
+                 //   selectedUser = (Utilizator) comboBoxUsers.getSelectionModel().getSelectedItem();
                     showRaport();
-                }
+                //}
             }
         });
-        comboBoxUsers.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
-                if(date1.getValue() != null && date2.getValue() != null){
-                    selectedUser = (Utilizator) comboBoxUsers.getSelectionModel().getSelectedItem();
-                    showRaport();
-                }
-            }
-        });
+        //comboBoxUsers.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        //    @Override
+         //   public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+         //       if(date1.getValue() != null && date2.getValue() != null){
+        //            selectedUser = (Utilizator) comboBoxUsers.getSelectionModel().getSelectedItem();
+         //           showRaport();
+         //       }
+         //   }
+       // });
 
         btn_pdf.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -162,38 +163,96 @@ public class ActivitatiiUser implements Observer<ChangeEvent> {
         }
     }
     public void showRaport(){
-        Utilizator user = (Utilizator)comboBoxUsers.getSelectionModel().getSelectedItem();
-        if(user != null){
-            selectedUser=user;
+       // Utilizator user = (Utilizator)comboBoxUsers.getSelectionModel().getSelectedItem();
+       // if(user != null){
+          //  selectedUser=user;
+        if(selectedUser != null) {
             initModelPrietenie(selectedUser);
             initModelMessages(selectedUser);
             setListView();
         }
+      //  }
 
     }
 
 
 
     private void createPdf(Utilizator user, ObservableList<String> lista){
-        String FILE_NAME = "C:/Users/ghera/Desktop/chillyfacts.pdf";
+        final JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("choosertitle");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        String FILE_NAME= new String();
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+            System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+            FILE_NAME = chooser.getSelectedFile().toString();
+        } else {
+            System.out.println("No Selection ");
+        }
+
+
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, new FileOutputStream(new File(FILE_NAME)));
             document.open();
             Paragraph p = new Paragraph();
-            p.add("Activitatiile lui " + user.getFirstName() + " " + user.getLastName());
+            p.add("Activitatiile lui " + user.getFirstName() + " " + user.getLastName() + " in intervalul " + date1.getValue() + "  ---> " + date2.getValue());
+
+
+
+
             p.setAlignment(Element.ALIGN_CENTER);
             document.add(p);
+            Paragraph p4 = new Paragraph("\n\n");
+            document.add(p4);
+            Paragraph p5 = new Paragraph("\n\n");
+            document.add(p5);
+            Paragraph p6 = new Paragraph("Prieteni noi in acest interval:");
+            document.add(p6);
+            Paragraph p7 = new Paragraph("\n\n");
+            document.add(p7);
             for(String s : lista) {
-                Paragraph p2 = new Paragraph();
-                p2.add(s);
-                document.add(p2);
+                if(s.startsWith("S")) {
+                    Paragraph p2 = new Paragraph();
+                    p2.add(s);
+                    document.add(p2);
+                }
             }
+            Paragraph p8 = new Paragraph("\n\n");
+            document.add(p8);
+            Paragraph p9 = new Paragraph("\n\n");
+            document.add(p9);
+            Paragraph p10 = new Paragraph("Mesaje in acest interval:");
+            document.add(p10);
+            Paragraph p11 = new Paragraph("\n\n");
+            document.add(p11);
+
+            for(String s : lista) {
+                if(s.startsWith("A")) {
+                    Paragraph p2 = new Paragraph();
+                    p2.add(s);
+                    document.add(p2);
+                }
+            }
+            Paragraph p12 = new Paragraph("\n\n");
+            document.add(p12);
+
+            Account accUser = service.getAccountByUserId(user.getId());
+            Image img = Image.getInstance(accUser.getUrl_photo());
+            float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+                    - document.rightMargin() - 20) / img.getWidth()) * 40;
+
+            img.scalePercent(scaler);
+            document.add(img);
 //            Font f = new Font();
 //            f.setStyle(Font.BOLD);
 //            f.setSize(8);
-            document.add(Image.getInstance("C:/Users/ghera/Desktop/efb5d90eeb07bb5914f094007da4c2f7.png"));
-            document.close();
+             document.close();
             System.out.println("Done");
         } catch (Exception e) {
             e.printStackTrace();

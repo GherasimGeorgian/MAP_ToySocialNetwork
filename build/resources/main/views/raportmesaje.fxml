@@ -5,9 +5,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.RaportMesajeController">
    <children>
-      <Label layoutX="76.0" layoutY="84.0" text="Mesaje pentru:" textFill="WHITE" />
-      <Label layoutX="362.0" layoutY="84.0" text="Primite de la:" textFill="WHITE" />
-      <ComboBox id="line" fx:id="comboBox1" layoutX="41.0" layoutY="114.0" prefWidth="150.0" stylesheets="@../style/stylesheet.css" />
+      <Label layoutX="232.0" layoutY="117.0" text="Primite de la:" textFill="WHITE" />
       <ComboBox id="line" fx:id="comboBox2" layoutX="321.0" layoutY="114.0" prefWidth="150.0" stylesheets="@../style/stylesheet.css" />
       <DatePicker id="line" fx:id="date1" layoutX="116.0" layoutY="37.0" stylesheets="@../style/stylesheet.css" />
       <DatePicker id="line" fx:id="date2" layoutX="396.0" layoutY="37.0" stylesheets="@../style/stylesheet.css" />

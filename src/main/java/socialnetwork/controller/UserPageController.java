@@ -142,7 +142,7 @@ public class UserPageController {
             AnchorPane root = loader.load();
             listAP.add(root);
             RaportController ctrl = loader.getController();
-            ctrl.setService(service);
+            ctrl.setService(service,user_app);
 
 
             acdinamic.getChildren().setAll(root);

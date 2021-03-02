@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.LoginStartController">
     <children>
@@ -11,14 +13,20 @@
 
                 <AnchorPane id="rnd" fx:id="acLogin" style="-fx-background-color: #ffffff;">
                <children>
-                  <Button id="sale" fx:id="btnCreateNewAccount" layoutX="139.0" layoutY="174.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="159.0" stylesheets="@../style/stylesheet.css" text="Create new account" />
-                  <Label fx:id="lblName" layoutX="39.0" layoutY="63.0" text="Email:" />
-                  <Label fx:id="lblPass" layoutX="37.0" layoutY="97.0" text="Parola:" />
-                  <PasswordField fx:id="textFieldPassword" layoutX="89.0" layoutY="93.0" stylesheets="@../style/stylesheet.css" />
-                  <TextField fx:id="textFieldEmail" layoutX="89.0" layoutY="59.0" prefHeight="26.0" prefWidth="149.0" stylesheets="@../style/stylesheet.css" />
-                  <Button id="sale" fx:id="btnLogin" layoutX="55.0" layoutY="174.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="68.0" stylesheets="@../style/stylesheet.css" text="Login" textOverrun="CLIP" />
-                  <Button id="sale" fx:id="btnCancel" layoutX="474.0" layoutY="281.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="99.0" stylesheets="@../style/stylesheet.css" text="Exit" />
+                  <Button id="sale" fx:id="btnCreateNewAccount" layoutX="444.0" layoutY="179.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="159.0" stylesheets="@../style/stylesheet.css" text="Create new account" />
+                  <Label fx:id="lblName" layoutX="350.0" layoutY="87.0" text="Email:" />
+                  <Label fx:id="lblPass" layoutX="350.0" layoutY="128.0" text="Parola:" />
+                  <PasswordField fx:id="textFieldPassword" layoutX="405.0" layoutY="124.0" stylesheets="@../style/stylesheet.css" />
+                  <TextField fx:id="textFieldEmail" layoutX="405.0" layoutY="83.0" prefHeight="26.0" prefWidth="149.0" stylesheets="@../style/stylesheet.css" />
+                  <Button id="sale" fx:id="btnLogin" layoutX="352.0" layoutY="179.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="68.0" stylesheets="@../style/stylesheet.css" text="Login" textOverrun="CLIP" />
+                  <Button id="sale" fx:id="btnCancel" layoutX="474.0" layoutY="322.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="99.0" stylesheets="@../style/stylesheet.css" text="Exit" />
                   <CheckBox fx:id="cBDarkMode" layoutX="502.0" layoutY="14.0" mnemonicParsing="false" text="Dark mode" />
+                  <ImageView fx:id="ivback" fitHeight="400.0" fitWidth="304.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label layoutX="53.0" layoutY="316.0" text="Nimic nou" textFill="#fd8e8e">
+                     <font>
+                        <Font name="Century Schoolbook" size="36.0" />
+                     </font>
+                  </Label>
                </children>
                 </AnchorPane>
             </items>

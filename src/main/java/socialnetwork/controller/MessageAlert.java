@@ -8,14 +8,7 @@ public class MessageAlert {
     static void showMessage(Stage owner, Alert.AlertType type, String header, String text){
         Alert message=new Alert(type);
         message.setHeaderText(header);
-        if(text.length()> 35){
-            int len = text.length();
-            String a = text.substring(0, len / 2), b = text.substring(len / 2);
-            message.setContentText(a + '\n' + b);
-        }
-        else {
-            message.setContentText(text);
-        }
+        message.setContentText(text);
         message.initOwner(owner);
         message.show();
     }

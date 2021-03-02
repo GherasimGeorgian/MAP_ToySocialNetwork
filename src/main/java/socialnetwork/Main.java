@@ -18,7 +18,7 @@ import socialnetwork.service.UserServiceFullDB;
 import socialnetwork.ui.SocialNetworkUIFullDB;
 import socialnetwork.utils.password.PasswordHashing;
 
-public class MainFX extends Application {
+public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 

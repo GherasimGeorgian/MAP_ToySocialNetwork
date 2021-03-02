@@ -33,8 +33,10 @@ public class RaportController {
     @FXML
     private Button btn_mesaje;
 
-    public void setService(UserServiceFullDB service) {
+    private Utilizator userApp;
+    public void setService(UserServiceFullDB service,Utilizator userApp) {
         this.service=service;
+        this.userApp = userApp;
     }
 
 
@@ -49,7 +51,7 @@ public class RaportController {
                     AnchorPane root = fxmlLoader.load();
 
                     activitatiiUserController = fxmlLoader.getController();
-                    activitatiiUserController.setService(service);
+                    activitatiiUserController.setService(service,userApp);
 
                     Scene scene = new Scene(root, 630, 400);
 
@@ -72,7 +74,7 @@ public class RaportController {
                     AnchorPane root = fxmlLoader.load();
 
                     raportMesajeController = fxmlLoader.getController();
-                    raportMesajeController.setService(service);
+                    raportMesajeController.setService(service,userApp);
 
                     Scene scene = new Scene(root, 630, 400);
 

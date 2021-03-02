@@ -7,13 +7,11 @@
    <children>
       <DatePicker id="line" fx:id="date1" layoutX="69.0" layoutY="109.0" stylesheets="@../style/stylesheet.css" />
       <DatePicker id="line" fx:id="date2" layoutX="285.0" layoutY="109.0" stylesheets="@../style/stylesheet.css" />
-      <Label layoutX="4.0" layoutY="6.0" text="Activitatile unui utilizator dintr-o perioada calendaristica, referitorla prietenii noi creati si mesajele primite in acea perioada" textFill="WHITE" />
+      <Label layoutX="2.0" layoutY="28.0" text="Activitatile unui utilizator dintr-o perioada calendaristica, referitorla prietenii noi creati si mesajele primite in acea perioada" textFill="WHITE" />
       <Label layoutX="69.0" layoutY="79.0" text="Interval inceput:" textFill="WHITE" />
       <Label layoutX="287.0" layoutY="79.0" text="Interval sfarsit:" textFill="WHITE" />
       <Label layoutX="23.0" layoutY="37.0" />
-      <Label layoutX="90.0" layoutY="46.0" text="Selectati utilizatorul:" textFill="WHITE" />
       <Button id="sale" fx:id="btn_pdf" layoutX="514.0" layoutY="306.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="121.0" stylesheets="@../style/stylesheet.css" text="Generati PDF" />
       <ListView fx:id="listRaport" layoutX="23.0" layoutY="162.0" prefHeight="200.0" prefWidth="476.0" stylesheets="@../style/styletable3.css" />
-      <ComboBox id="line" fx:id="comboBoxUsers" layoutX="212.0" layoutY="42.0" prefWidth="150.0" stylesheets="@../style/stylesheet.css" />
    </children>
 </AnchorPane>
