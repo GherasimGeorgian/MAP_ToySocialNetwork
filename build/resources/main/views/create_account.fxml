@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="acCreateAC" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.CreateAccountController">
+   <children>
+      <Label fx:id="lblNume" layoutX="34.0" layoutY="22.0" text="Nume:" textFill="WHITE" />
+      <Label fx:id="lblPrenume" layoutX="34.0" layoutY="59.0" text="Prenume:" textFill="WHITE" />
+      <Label fx:id="lblEmail" layoutX="34.0" layoutY="97.0" text="Email:" textFill="WHITE" />
+      <Label fx:id="lblPass" layoutX="34.0" layoutY="142.0" text="Parola:" textFill="WHITE" />
+      <Label fx:id="lblCPass" layoutX="34.0" layoutY="178.0" text="Confirmare parola:" textFill="WHITE" />
+      <TextField fx:id="txtNume" layoutX="156.0" layoutY="18.0" />
+      <TextField fx:id="txtPrenume" layoutX="156.0" layoutY="55.0" />
+      <TextField fx:id="txtEmail" layoutX="156.0" layoutY="93.0" />
+      <Button id="sale" fx:id="btnCreate" layoutX="41.0" layoutY="343.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Creeaza cont" />
+      <Button id="sale" fx:id="btnCancel" layoutX="445.0" layoutY="343.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Cancel" />
+      <CheckBox fx:id="checkBoxCondition" layoutX="41.0" layoutY="214.0" mnemonicParsing="false" text="Sunt de acord cu conditiile si restrictiile" textFill="WHITE" />
+      <PasswordField fx:id="txtParola" layoutX="156.0" layoutY="138.0" />
+      <PasswordField fx:id="txtConfirmParola" layoutX="156.0" layoutY="174.0" />
+      <ImageView fx:id="imageView1" fitHeight="99.0" fitWidth="149.0" layoutX="65.0" layoutY="232.0" pickOnBounds="true" preserveRatio="true" />
+      <TextField fx:id="txtConfirmCode" layoutX="243.0" layoutY="281.0" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #271033;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.CerereProfilController">
+    <TableView fx:id="tableViewInvite2" layoutX="312.0" layoutY="39.0" prefHeight="171.0" prefWidth="248.0" stylesheets="@../style/styletable3.css">
+        <columns>
+            <TableColumn fx:id="tableColumnFirstNameToRec2" prefWidth="138.0" text="FirstName" />
+            <TableColumn fx:id="tableColumnLastNameToRec2" prefWidth="138.0" text="LastName" />
+        </columns>
+    </TableView>
+    <Button id="sale" layoutX="337.0" layoutY="224.0" mnemonicParsing="false" onAction="#handleAcceptInvite" stylesheets="@../style/stylesheet.css" text="Accept" />
+    <Button id="sale" fx:id="btnRejectInvite" layoutX="436.0" layoutY="224.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Reject" />
+
+    <Label layoutX="312.0" layoutY="14.0" text="Cereri de prietenie" textFill="WHITE" />
+   <ImageView fx:id="imageViewFriend" fitHeight="185.0" fitWidth="248.0" layoutX="29.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true" />
+</AnchorPane>

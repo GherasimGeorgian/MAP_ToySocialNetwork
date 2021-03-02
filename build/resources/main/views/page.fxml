@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="acPage" prefHeight="566.0" prefWidth="1162.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="socialnetwork.controller.PageController">
+   <children>
+      <Label fx:id="lblFirstName" layoutX="39.0" layoutY="14.0" text="Label" textFill="WHITE" />
+      <Label fx:id="lblLastName" layoutX="119.0" layoutY="14.0" text="Label" textFill="WHITE" />
+      <TableView fx:id="tableViewUserFriends" layoutX="9.0" layoutY="177.0" prefHeight="323.0" prefWidth="276.0" stylesheets="@../style/styletable3.css">
+        <columns>
+            <TableColumn fx:id="tableColumnImage" prefWidth="138.0" text="" />
+            <TableColumn fx:id="tableColumnFirstName" prefWidth="138.0" text="FirstName" />
+            <TableColumn fx:id="tableColumnLastName" prefWidth="138.0" text="LastName" />
+
+        </columns>
+      </TableView>
+      <Button id="sale" fx:id="btnAddNewFriend" layoutX="862.0" layoutY="113.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="Adauga prieten" />
+      <Button id="sale" fx:id="btnfriendrequests" layoutX="862.0" layoutY="300.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="Cereri" />
+      <Button id="sale" fx:id="btnDelFriend" layoutX="29.0" layoutY="509.0" mnemonicParsing="false" onAction="#handleDeletePrietenieDto" prefHeight="42.0" prefWidth="139.0" stylesheets="@../style/stylesheet.css" text="Sterge prieten" />
+      <Button id="sale" fx:id="btnCreateEvent" layoutX="862.0" layoutY="170.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="CreateEvent" />
+      <Button id="sale" fx:id="btnAbonareEveniment" layoutX="862.0" layoutY="240.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" stylesheets="@../style/stylesheet.css" text="Abonare Eveniment" />
+      <Label layoutX="491.0" layoutY="391.0" textFill="WHITE" />
+      <TextField fx:id="txtSeconds" layoutX="991.0" layoutY="66.0" prefHeight="26.0" prefWidth="42.0" />
+      <Label fx:id="lblTimer" layoutX="653.0" layoutY="71.0" text="Seteaza la cate secunde sa primesti notificari de la evenimente:" textFill="#f2f2f2" />
+     
+       <TextField fx:id="textFieldSearchFriend" layoutX="491.0" layoutY="17.0" prefHeight="26.0" prefWidth="208.0" />
+      <Label fx:id="lblCauta" layoutX="453.0" layoutY="21.0" text="Cauta:" textFill="#fdfdfd" />
+      <Button id="line" fx:id="btnSendInvite" layoutX="708.0" layoutY="17.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" stylesheets="@../style/stylesheet.css" text="Send Invite" />
+      <Label fx:id="lblUser" layoutX="491.0" layoutY="53.0" prefHeight="18.0" prefWidth="190.0" textFill="WHITE" />
+      <ListView fx:id="listViewNotificari" layoutX="285.0" layoutY="104.0" prefHeight="439.0" prefWidth="563.0" />
+      <ImageView fx:id="imageViewProfile" fitHeight="102.0" fitWidth="139.0" layoutX="29.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true" />
+      <Button id="line" fx:id="btnChangeImage" layoutX="39.0" layoutY="143.0" mnemonicParsing="false" stylesheets="@../style/stylesheet.css" text="Schimba imaginea" />
+   </children>
+</AnchorPane>
