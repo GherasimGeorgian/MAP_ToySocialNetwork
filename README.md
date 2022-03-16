@@ -1,5 +1,5 @@
 #MAP_ToySocialNetwork
-Varianta finala a aplicatiei se afla pe branch_final
+
 Login
 ![image](https://user-images.githubusercontent.com/63847951/158622637-8306fc3c-1536-4e35-a2af-a6075d146d27.png)
 ![image](https://user-images.githubusercontent.com/63847951/158622789-bccfe29b-166b-43db-9275-36a2d5fa2d42.png)
